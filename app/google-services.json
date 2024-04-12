@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "815785394104",
+    "project_id": "tirthbus",
+    "storage_bucket": "tirthbus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:815785394104:android:d572b2f5e7428978fe194d",
+        "android_client_info": {
+          "package_name": "com.example.tirthbus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEWnxLbArR8g1Z4A1dyTqaQ8dBNF-q8IQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
