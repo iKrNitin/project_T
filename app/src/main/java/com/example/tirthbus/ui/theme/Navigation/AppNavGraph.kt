@@ -64,8 +64,8 @@ fun AppNavHost(
                 backStackEntry ->
             val searchQuery = backStackEntry.arguments?.getString("searchQuery")
             searchQuery?.let {
-                SearchResultScreen(searchQuery = searchQuery, navigateBack = { /*TODO*/ },
-                    navigateToYatraDetail = {yatraId -> navController.navigate("${YatraDetailsScreenDestination.route}/$yatraId")} )
+                SearchResultScreen(searchQuery = searchQuery, navigateBack = { navController.popBackStack() },
+                    navigateToYatraDetail = {yatraId -> navController.navigate("${YatraDetailsScreenDestination.route}/$yatraId")})
             }
         }
         
@@ -130,7 +130,8 @@ fun AppNavHost(
             backStackEntry ->
             val yatraId = backStackEntry.arguments?.getString("yatraId")
             yatraId?.let {
-                YatraDetailScreen(yatraId = it, navigateBack = {navController.navigateUp()})
+                YatraDetailScreen(yatraId = it,
+                    navigateBack = {navController.navigateUp()})
             }
         }
 

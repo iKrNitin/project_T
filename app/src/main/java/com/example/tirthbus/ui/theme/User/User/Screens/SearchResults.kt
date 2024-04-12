@@ -72,7 +72,10 @@ fun SearchResultScreen(
 
     Scaffold(
         topBar = {
-            AppTopBar(title = searchQuery, canNavigateBack = true , navigateToSignUpScreen = { /*TODO*/ },scrollBehavior = appScrollBehavior)
+            AppTopBar(title = searchQuery,
+                canNavigateBack = true , navigateToSignUpScreen = { /*TODO*/},
+                navigateUp = {navigateBack()},
+                scrollBehavior = appScrollBehavior)
         }
     ) {innerpadding ->
         Column(modifier = Modifier.padding(innerpadding)){

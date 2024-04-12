@@ -74,7 +74,7 @@ fun AppTopBar(
         },
         navigationIcon = {
             if (canNavigateBack){
-                IconButton(onClick = {navigateUp},
+                IconButton(onClick = {navigateUp()},
                 ) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = stringResource(
                         id = R.string.Back

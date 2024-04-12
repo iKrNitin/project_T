@@ -224,7 +224,7 @@ fun UserHomeScreen(
             Box(modifier = Modifier
                 .padding(innerpadding)){
                 Column(modifier = Modifier
-                    .padding(5.dp)
+                    .padding(start = 10.dp,end = 10.dp)
                     .verticalScroll(rememberScrollState())){
 
                     /*SearchBar { searchQuery ->
@@ -237,7 +237,7 @@ fun UserHomeScreen(
                     }
 
                     Text(text = "Top Yatra Destinations",
-                        style = MaterialTheme.typography.displayMedium,
+                        style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(10.dp),
                         fontWeight = FontWeight.Bold)
 
@@ -247,7 +247,7 @@ fun UserHomeScreen(
                         navigateToDestination = {searchQuery -> navigateToSearchResult(searchQuery)} )
 
                     Text(text = "Yatras Departing from your city",
-                        style = MaterialTheme.typography.displayMedium,
+                        style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(5.dp),
                         softWrap = true)
@@ -386,8 +386,8 @@ fun SearchCard(onClick:() -> Unit){
         .fillMaxWidth()
         .aspectRatio(2f),
            /*border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.primary),*/
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         shape = ShapeDefaults.Large){
         Text(text = "Search Your",
             fontSize = 30.sp,
@@ -585,11 +585,11 @@ fun YatraCard3(
 ){
     Card(
         modifier = modifier
-            .aspectRatio(2.5f)
+            .aspectRatio(2.9f)
             .fillMaxWidth()
             .clickable { onCardClick() }
             .padding(5.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ){
         Row {
@@ -602,18 +602,20 @@ fun YatraCard3(
             FlowColumn(modifier = Modifier.padding(5.dp)) {
                 item.yatra?.yatraName?.let {
                     Text(text = it,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,)
                 }
                 Row() {
                     Icon(Icons.Default.CalendarMonth, contentDescription = null )
                     item.yatra?.date?.let {
                         Text(text = it,
+                            style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.weight(0.5f))
                     }
                     Icon(Icons.Default.CurrencyRupee, contentDescription = null)
                     item.yatra?.totalAmount?.let {
                         Text(text = it,
+                            style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,)
                     }
                 }
@@ -624,7 +626,8 @@ fun YatraCard3(
                 }
                 Row {
                 Icon(Icons.Default.LocationOn, contentDescription = null)
-                Text(text = item.yatra!!.yatraLocation!!)
+                Text(text = item.yatra!!.yatraLocation!!,
+                    style = MaterialTheme.typography.bodyMedium)
                 }
                /* Row {
                     Icon(Icons.Default.Face, contentDescription = null,
