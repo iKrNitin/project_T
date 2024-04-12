@@ -237,7 +237,8 @@ fun UserHomeScreen(
                     }
 
                     Text(text = "Top Yatra Destinations",
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = MaterialTheme.typography.displayMedium,
+                        modifier = Modifier.padding(10.dp),
                         fontWeight = FontWeight.Bold)
 
                     TopDestinationLayout2(data = topDestinationList1,
@@ -245,29 +246,16 @@ fun UserHomeScreen(
                     TopDestinationLayout2(data = topDestinationList2,
                         navigateToDestination = {searchQuery -> navigateToSearchResult(searchQuery)} )
 
-                    /*Text(text = "Top Yatra Destinations",
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.Bold)
-                    LazyRow( modifier = modifier){
-                        when(val result = topDestinationsState){
-                            is ResultState.Loading -> {Log.d("Search","Loading top destination")}
-                            is ResultState.Success -> {val topDestinations = result.data
-                            items(topDestinations){destination ->
-                                    TopDestinationsCard(imageURLs = destination.imageURLs)
-                            }}
-                            else -> {Log.d("Search","This is failure state")}
-                        }
-                    }*/
+                    Text(text = "Yatras Departing from your city",
+                        style = MaterialTheme.typography.displayMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(5.dp),
+                        softWrap = true)
 
-                    Text(text = "Yatras Departing from",
+                    /*Text(text = "Your City",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(3.dp))
-
-                    Text(text = "Your City",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(3.dp))
+                        modifier = Modifier.padding(3.dp))*/
 
                     LazyRow(modifier = modifier){
                         items(pagingData.itemCount){
