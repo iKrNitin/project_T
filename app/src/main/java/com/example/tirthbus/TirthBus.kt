@@ -5,9 +5,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.Book
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,6 +23,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -106,22 +113,36 @@ fun AppBottomBar(
     onBookingsClick:() -> Unit,
     onHomeClick:() -> Unit,
 ){
+    var isSelected by remember {
+        mutableStateOf(true)
+    }
     BottomAppBar(modifier = Modifier.fillMaxWidth(),
         //containerColor = MaterialTheme.colorScheme.primaryContainer,
 
         actions =  {
-            IconButton(onClick = {onHomeClick()},
+            IconButton(onClick = {onHomeClick() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)) {
+                if (isSelected){
                 Icon(imageVector = Icons.Filled.Home, contentDescription = null)
+                }
+                else{
+                    Icon(imageVector = Icons.Outlined.Home, contentDescription = null)
+                }
 
             }
-            IconButton(onClick = {onBookingsClick()},
+            IconButton(onClick = {onBookingsClick()
+                                 isSelected = true},
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)) {
-                Icon(imageVector = Icons.Filled.DateRange, contentDescription = null)
+                if (isSelected){
+                    Icon(imageVector = Icons.Filled.Book, contentDescription = null)
+                }
+                else{
+                    Icon(imageVector = Icons.Outlined.Book, contentDescription = null)
+                }
             }
             IconButton(onClick = {onAccountCircleClick()},
                 modifier = Modifier

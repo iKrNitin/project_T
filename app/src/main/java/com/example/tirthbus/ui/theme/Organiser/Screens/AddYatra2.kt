@@ -1,5 +1,6 @@
 package com.example.tirthbus.ui.theme.Organiser.Screens
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -46,7 +47,7 @@ object AddYatra2Destination: NavigationDestination {
 fun AddYatraScreen2(
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
-    navigateToNextScreen:()->Unit,
+    navigateToAddYatra3:(YatraUiState)->Unit,
     viewModel: AddYatraViewModel = hiltViewModel(),
     yatraUiState: YatraUiState // Receive the UI state as a parameter
 ){
@@ -56,22 +57,10 @@ fun AddYatraScreen2(
     var uiState by remember {
         mutableStateOf(yatraUiState)
     }
-   /* var yatraUiStateFromViewModel = viewModel.yatraUiState
-    Log.d("User","initial yatraUistatefrom viewmodel is $yatraUiStateFromViewModel")
-    yatraUiStateFromViewModel = yatraUiState
-    Log.d("User","final yatraUistatefrom viewmodel is $yatraUiStateFromViewModel")*/
-
-    val data = yatraUiState.yatraDetails.copy()
-
     LaunchedEffect(yatraUiState){
+        uiState = yatraUiState
         Log.d("Add yatra","receving $yatraUiState from 1st screen")
     }
-
-    val updateUiStateWithFields:(YatraDetailsResponse.Yatra) -> Unit = {
-        viewModel.updateSpecificFields(yatraUiState.yatraDetails)
-    }
-
-
 
     Scaffold(
         topBar = {
@@ -89,43 +78,57 @@ fun AddYatraScreen2(
         )
         {
             Log.d("Yatra","current ui state is on 2nd screen is ${yatraUiState.yatraDetails.copy()}")
-            AddYatraLayout2(
-                //yatraUiState = viewModel.yatraUiState,
-                yatraUiState = uiState,
-                onYatraValueChange = {yatra -> uiState.yatraDetails.copy(organiserName = yatra.organiserName)  },
+            AddYatra2Layout(
+                includeslist = viewModel.IncludesList,
+                includestempList = uiState.yatraDetails.includesList,
+                onIncludesSelected = {selectedList,includestempList -> uiState = uiState.copy(
+                    yatraDetails = uiState.yatraDetails.copy(includesList = selectedList)
+                )},
+                rulesList = viewModel.rulesList,
+                rulestempList = uiState.yatraDetails.rulesList,
+                onRuleSelected = {selectedList,includestempList ->
+                    uiState = uiState.copy(
+                    yatraDetails = uiState.yatraDetails.copy(rulesList = selectedList)
+                ) },
                 onNextClick = {
-                              Log.d("Yatra","here final ui state is ${yatraUiState.yatraDetails}")
-                    //navigateToOraganiser()
-                    /*uri?.let { viewModel.uploadImageToStorage2(viewModel.yatraUiState.yatraDetails,it, "image", context) }
-                    */
+                    navigateToAddYatra3(uiState)
+                              Log.d("Yatra","here final ui state is $uiState")
                      })
         }
     }
 }
 
 @Composable
-fun AddYatraLayout2(
-    modifier: Modifier = Modifier,
-    yatraUiState: YatraUiState,
-    onYatraValueChange: (YatraDetailsResponse.Yatra) -> Unit ,
+fun AddYatra2Layout(
     onNextClick:() -> Unit,
+    includeslist:List<String?>,
+    rulesList:List<String?>,
+    includestempList:List<String?>,
+    rulestempList:List<String?>,
+    onIncludesSelected: (List<String?>, List<String?>) -> Unit,
+    onRuleSelected: (List<String?>, List<String?>) -> Unit,
 ){
     Column(
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
+        AddList2(rulesList,includeslist, includestempList ,rulestempList, onIncludesSelected,onRuleSelected )
 
-        AddContactForm(
-            data = yatraUiState.yatraDetails,
-            onItemValueChange = onYatraValueChange )
         Button(
             onClick = onNextClick,
-           // enabled = yatraUiState.isEntryValid,
+            //enabled = yatraUiState.isEntryValid,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth()) {
-            Text(text = stringResource(id = R.string.save))
+            Text(text = stringResource(id = R.string.next))
         }
 
+        /* Button(
+             onClick = onImageClick,
+             enabled = yatraUiState.isEntryValid,
+             shape = MaterialTheme.shapes.small,
+             modifier = Modifier.fillMaxWidth()) {
+             Text(text = stringResource(id = R.string.select_image))
+         }*/
     }
 }
 

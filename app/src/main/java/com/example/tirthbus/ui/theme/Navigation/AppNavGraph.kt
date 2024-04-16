@@ -8,9 +8,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.tirthbus.ui.theme.Organiser.Screens.AddYatra2Destination
+import com.example.tirthbus.ui.theme.Organiser.Screens.AddYatra3Destination
 import com.example.tirthbus.ui.theme.Organiser.Screens.AddYatraDestination
 import com.example.tirthbus.ui.theme.Organiser.Screens.AddYatraScreen1
 import com.example.tirthbus.ui.theme.Organiser.Screens.AddYatraScreen2
+import com.example.tirthbus.ui.theme.Organiser.Screens.AddYatraScreen3
 import com.example.tirthbus.ui.theme.Organiser.Screens.OrganiserHomeScreen
 import com.example.tirthbus.ui.theme.Organiser.Screens.OrganiserHomeScreenDestination
 import com.example.tirthbus.ui.theme.Organiser.ViewModel.YatraUiState
@@ -94,8 +96,21 @@ fun AppNavHost(
             val yatraUiState = Gson().fromJson(yatraUiStateJson,YatraUiState::class.java)
             AddYatraScreen2(
                 navigateBack = { navController.navigateUp() },
-                navigateToNextScreen = { /*TODO*/ },
+                navigateToAddYatra3 = { yatraUiState ->
+                    val yatraUiStateJson = Gson().toJson(yatraUiState)
+                    val route = "${AddYatra3Destination.route}/$yatraUiStateJson"
+                    navController.navigate(route)},
                 yatraUiState = yatraUiState
+            )
+        }
+
+        composable(route = AddYatra3Destination.route + "/{yatraUiState2}"){
+            val yatraUiStateJson = it.arguments?.getString("yatraUiState2")
+            val yatraUiState = Gson().fromJson(yatraUiStateJson,YatraUiState::class.java)
+            AddYatraScreen3(
+                navigateBack = { navController.navigateUp() },
+                yatraUiState = yatraUiState,
+                navigateToOraganiser = {navController.navigate(UserHomeScreenDestination.route)}
             )
         }
 
@@ -140,7 +155,14 @@ fun AppNavHost(
         }
 
         composable(route = UserBookingsDestination.route){
-            UserBookingScreen()
+            UserBookingScreen(navigateToHomeScreen = {navController.navigate(UserHomeScreenDestination.route)})
         }
     }
+}
+
+object Graph {
+    const val ROOT = "root_graph"
+    const val AUTHENTICATION = "auth_graph"
+    const val HOME = "home_graph"
+    const val DETAILS = "details_graph"
 }

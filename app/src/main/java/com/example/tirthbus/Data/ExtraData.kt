@@ -35,6 +35,12 @@ data class TopDestinations(
     val imageText:String?,
 )
 
+val bannerList = listOf<String>("https://firebasestorage.googleapis.com/v0/b/tirthbus.appspot.com/o/topDestinations%2FTYDkhatushyam.jpg?alt=media&token=71490c16-e1cd-415a-9886-f4bcca9b60b9",
+    "https://firebasestorage.googleapis.com/v0/b/tirthbus.appspot.com/o/images%2Fe1b33175-8fcd-4220-8e8a-24d0790c8e5e.jpg?alt=media&token=6279b91d-e01c-468e-b434-e9035a0ad4dc",
+    "https://firebasestorage.googleapis.com/v0/b/tirthbus.appspot.com/o/topDestinations%2FTYDHaridwar.jpg?alt=media&token=206f10cf-a43c-4696-96e4-c6b431ac1494",
+    "https://firebasestorage.googleapis.com/v0/b/tirthbus.appspot.com/o/topDestinations%2FTYDKashi.jpg?alt=media&token=c2a48101-4fcb-4d36-a8bc-b888dd64b0c4"
+    )
+
 val topDestinationList1 = listOf<TopDestinations>(
     TopDestinations("https://firebasestorage.googleapis.com/v0/b/tirthbus.appspot.com/o/topDestinations%2FTYDkhatushyam.jpg?alt=media&token=71490c16-e1cd-415a-9886-f4bcca9b60b9","KhatuShyam"),
     TopDestinations("https://firebasestorage.googleapis.com/v0/b/tirthbus.appspot.com/o/images%2Fe1b33175-8fcd-4220-8e8a-24d0790c8e5e.jpg?alt=media&token=6279b91d-e01c-468e-b434-e9035a0ad4dc",

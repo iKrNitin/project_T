@@ -7,11 +7,11 @@ import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowColumn
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -33,7 +33,6 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.CurrencyRupee
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
@@ -43,7 +42,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -65,7 +63,6 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -87,17 +84,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.tirthbus.AppBottomBar
 import com.example.tirthbus.AppTopBar
-import com.example.tirthbus.Data.AlertDialogBox
-import com.example.tirthbus.Data.ResultState
 import com.example.tirthbus.Data.TopDestinations
 import com.example.tirthbus.Data.YatraDetailsResponse
+import com.example.tirthbus.Data.bannerList
 import com.example.tirthbus.Data.topDestinationList1
 import com.example.tirthbus.Data.topDestinationList2
 import com.example.tirthbus.R
@@ -106,8 +101,8 @@ import com.example.tirthbus.ui.theme.Organiser.Screens.GetCurrentLocation
 import com.example.tirthbus.ui.theme.Theme.TirthBusTheme
 import com.example.tirthbus.ui.theme.User.User.ViewModel.HomeViewModel
 import com.example.tirthbus.ui.theme.User.User.ViewModel.UserAuthViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 object UserHomeScreenDestination : NavigationDestination {
     override val route: String
@@ -154,10 +149,13 @@ fun UserHomeScreen(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(
+                modifier = Modifier.fillMaxWidth(0.6f),
                 drawerShape = ShapeDefaults.Medium,
                 drawerContentColor = MaterialTheme.colorScheme.primary,
                 drawerTonalElevation = 10.dp) {
-                Text(text = "Drawer", modifier = Modifier.padding(16.dp))
+                Text(text = "TirthBus",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(16.dp))
                 Divider()
 
                 NavigationDrawerItem(
@@ -224,7 +222,7 @@ fun UserHomeScreen(
             Box(modifier = Modifier
                 .padding(innerpadding)){
                 Column(modifier = Modifier
-                    .padding(start = 10.dp,end = 10.dp)
+                    .padding(start = 10.dp, end = 10.dp)
                     .verticalScroll(rememberScrollState())){
 
                     /*SearchBar { searchQuery ->
@@ -238,8 +236,10 @@ fun UserHomeScreen(
 
                     Text(text = "Top Yatra Destinations",
                         style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(10.dp),
+                        modifier = Modifier.padding(top=25.dp, bottom = 10.dp, start = 10.dp, end = 10.dp),
                         fontWeight = FontWeight.Bold)
+                    
+                   // ImageSlider(images = bannerList)
 
                     TopDestinationLayout2(data = topDestinationList1,
                         navigateToDestination = {searchQuery -> navigateToSearchResult(searchQuery)} )
@@ -249,7 +249,7 @@ fun UserHomeScreen(
                     Text(text = "Yatras Departing from your city",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(5.dp),
+                        modifier = Modifier.padding(top=25.dp, bottom = 10.dp, start = 10.dp, end = 10.dp),
                         softWrap = true)
 
                     /*Text(text = "Your City",
@@ -769,13 +769,74 @@ fun SearchBar(
     )
 }
 
+@Composable
+fun ImageSlider(images: List<String>){
+    var currentImageIndex by remember { mutableStateOf(0) }
+    var isAnimating by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
+    Column(modifier = Modifier.fillMaxSize()) {
+
+        Box(modifier = Modifier
+            .weight(1f)
+            .height(100.dp)
+            .fillMaxWidth()
+            .padding(16.dp)) {
+            // Scrollable Row of Cards
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                itemsIndexed(images) { index, image ->
+                    Card(
+                        modifier = Modifier
+                            .width(300.dp)
+                            .height(200.dp)
+                            .clickable {
+                                if (index != currentImageIndex && !isAnimating) {
+                                    isAnimating = true
+                                    coroutineScope.launch {
+                                        val delayMillis = 500L
+                                        // Wait for the card to change color before animating
+                                        delay(delayMillis / 2)
+                                        currentImageIndex = index
+                                        delay(delayMillis)
+                                        isAnimating = false
+                                    }
+                                }
+                            },
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        AsyncImage(
+                            contentDescription = "",
+                            model = image as String,
+                            modifier = Modifier
+                                .width(300.dp)
+                                .height(300.dp)
+                        )
+                    }
+                }
+
+            }
+
+        }
+    }
+    // Automatic Image Slider
+    LaunchedEffect(currentImageIndex) {
+        while (true) {
+            delay(5000L)
+            if (!isAnimating) {
+                val nextIndex = (currentImageIndex + 1) % images.size
+                currentImageIndex = nextIndex
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun HomePreview(){
     TirthBusTheme {
-        /*YatraCard4(item = YatraDetailsResponse(YatraDetailsResponse.Yatra("Shri Khatushyam Dham Yatra","23-25 April 2024","8:00 PM","Rajeev Garden,Loni,Ghaziabad", totalAmount = "1500/-", organiserName = "Shri shyam mandal"))) {}*/
-        SearchCard({})
-        //TopDestinationLayout(urlList = listOf())
-        //SearchBarSample()
+        ImageSlider(images = bannerList)
     }
 }

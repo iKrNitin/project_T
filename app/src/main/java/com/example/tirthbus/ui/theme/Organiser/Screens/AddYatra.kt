@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.AutoCompleteTextView
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -220,9 +221,9 @@ fun AddYatraLayout(
             uri = uri,
             modifier = Modifier.fillMaxWidth())
 
-        AddList2(rulesList,includeslist, includestempList ,rulestempList, onIncludesSelected,onRuleSelected )
+        //AddList2(rulesList,includeslist, includestempList ,rulestempList, onIncludesSelected,onRuleSelected )
 
-        AddContactForm(data = yatraUiState.yatraDetails, onItemValueChange = onYatraValueChange)
+        //AddContactForm(data = yatraUiState.yatraDetails, onItemValueChange = onYatraValueChange)
 
         Button(
             onClick = onNextClick,
@@ -319,7 +320,7 @@ fun AddYatraForm(
         }
     }
 
-    Button(
+   /* Button(
         onClick = onSelectImageClick,
         shape = MaterialTheme.shapes.small,
         modifier = Modifier.fillMaxWidth()) {
@@ -332,7 +333,7 @@ fun AddYatraForm(
             width = 2.dp,
             color = MaterialTheme.colorScheme.primaryContainer,
             shape = ShapeDefaults.Large
-        ))
+        ))*/
 
     if (enabled) {
         Text1(text = stringResource(id = R.string.reqrd),
