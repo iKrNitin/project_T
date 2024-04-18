@@ -13,6 +13,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.channels.awaitClose
@@ -383,6 +384,30 @@ class YatraRepoImpl @Inject constructor(private val db : FirebaseFirestore,
             close()
         }
     }
+
+    override fun getTandC(): Flow<ResultState<List<String>>> = callbackFlow {
+        try {
+            Log.d("Yatra", "attempting to fetch TandC with id ")
+            val yatraDocRef = db.collection("TandC").document("TandC/koOx62Z7K3DY24YwDEDe")
+            // Retrieve document data
+            yatraDocRef.get().addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val termsAndConditionsList = documentSnapshot.toObject<List<String>>()
+                        ?: emptyList()
+                    trySend(ResultState.Success(termsAndConditionsList))
+                } else {
+                    Log.d("TC","Document does not exist")
+                    trySend(ResultState.Failure(Exception("Document does not exist")))
+                }
+            }.addOnFailureListener { exception ->
+                trySend(ResultState.Failure(exception))
+            }
+            awaitClose()
+        } catch (e: Exception) {
+            trySend(ResultState.Failure(e))
+        }
+    }
+
 }
 
 private const val PAGE_SIZE = 20

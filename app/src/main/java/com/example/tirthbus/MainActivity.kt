@@ -34,6 +34,7 @@ import com.example.tirthbus.ui.theme.Organiser.Screens.AddYatraScreen2
 import com.example.tirthbus.ui.theme.Organiser.Screens.AutoCompletePlacesScreen
 import com.example.tirthbus.ui.theme.Organiser.Screens.GetCurrentLocation
 import com.example.tirthbus.ui.theme.Organiser.Screens.MainScreen
+import com.example.tirthbus.ui.theme.Organiser.Screens.TandCScreen
 import com.example.tirthbus.ui.theme.Theme.TirthBusTheme
 import com.example.tirthbus.ui.theme.User.User.Screens.SearchBar
 import com.example.tirthbus.ui.theme.User.User.Screens.SearchBarSample
@@ -107,7 +108,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     //ॐ श्री गणेशाय नम:
-                    MyApp()
+                    TandCScreen(navigateBack = { /*TODO*/ })
                     //LocationScreen(currentLocation = currentLocation, context = this@MainActivity)
                 }
             }

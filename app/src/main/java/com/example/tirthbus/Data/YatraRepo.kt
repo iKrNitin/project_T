@@ -33,4 +33,6 @@ interface YatraRepo {
     /*fun deleteYatra(key:String) : Flow<ResultState<String>>*/
 
     fun updateYatra(yatra:YatraDetailsResponse) : Flow<ResultState<String>>
+
+    fun getTandC():Flow<ResultState<List<String>>>
 }

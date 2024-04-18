@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -74,6 +75,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
@@ -125,21 +127,16 @@ fun UserHomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     viewModel2: UserAuthViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
-){
+) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val appScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     //val res = viewModel.result.value
     //val pagingData = viewModel.yatrasList.collectAsLazyPagingItems()
-    val pagingData: LazyPagingItems<YatraDetailsResponse> = viewModel.yatrasList.collectAsLazyPagingItems()
+    val pagingData: LazyPagingItems<YatraDetailsResponse> =
+        viewModel.yatrasList.collectAsLazyPagingItems()
     val dialogState = viewModel.exitDialogState
     val locationState = remember { mutableStateOf<Location?>(null) }
-
-    /*LaunchedEffect(viewModel) {
-        if (topDestinationsState is ResultState.Loading) {
-            viewModel.fetchTopDestinations()
-        }
-    }*/
 
     GetCurrentLocation { location ->
         locationState.value = location
@@ -152,31 +149,34 @@ fun UserHomeScreen(
                 modifier = Modifier.fillMaxWidth(0.6f),
                 drawerShape = ShapeDefaults.Medium,
                 drawerContentColor = MaterialTheme.colorScheme.primary,
-                drawerTonalElevation = 10.dp) {
-                Text(text = "TirthBus",
+                drawerTonalElevation = 10.dp
+            ) {
+                Text(
+                    text = "TirthBus",
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(16.dp))
+                    modifier = Modifier.padding(16.dp)
+                )
                 Divider()
 
                 NavigationDrawerItem(
-                    label = { Text(text = stringResource(id = R.string.Organiser))},
+                    label = { Text(text = stringResource(id = R.string.Organiser)) },
                     selected = false,
-                    onClick =  {navigateToOraganiser()},
+                    onClick = { navigateToOraganiser() },
                     icon = { Icon(imageVector = Icons.Filled.Person, contentDescription = "hey") })
 
                 NavigationDrawerItem(
-                    label = { Text(text = stringResource(id = R.string.help))},
+                    label = { Text(text = stringResource(id = R.string.help)) },
                     icon = { Icon(imageVector = Icons.Filled.Call, contentDescription = null) },
                     selected = false,
-                    onClick = { scope.launch { drawerState.close() }  })
+                    onClick = { scope.launch { drawerState.close() } })
 
                 NavigationDrawerItem(
-                    label = { Text(text = stringResource(id = R.string.about))},
+                    label = { Text(text = stringResource(id = R.string.about)) },
                     icon = { Icon(imageVector = Icons.Filled.Info, contentDescription = null) },
                     selected = false,
-                    onClick = { scope.launch { drawerState.close() }  })
+                    onClick = { scope.launch { drawerState.close() } })
             }
-        }){
+        }) {
         Scaffold(
             topBar =
             {
@@ -187,19 +187,19 @@ fun UserHomeScreen(
                         viewModel2.logoutUser(viewModel2.signUpUiState)
                         navigateToSignUpScreen()
                     },
-                    onDrawerClick = {scope.launch { drawerState.open() }},
-                    scrollBehavior = appScrollBehavior)
-            /*HomeScreenTopBar(onDrawerClick = {scope.launch { drawerState.open() }})*/
+                    onDrawerClick = { scope.launch { drawerState.open() } },
+                    scrollBehavior = appScrollBehavior
+                )
+                /*HomeScreenTopBar(onDrawerClick = {scope.launch { drawerState.open() }})*/
             },
             bottomBar = {
                 AppBottomBar(
-                    onHomeClick = {onHomeClick()},
-                    onAccountCircleClick = {onAccountCircleClick()},
-                    onBookingsClick = {onBookingsClick()}
+                    onHomeClick = { onHomeClick() },
+                    onAccountCircleClick = { onAccountCircleClick() },
+                    onBookingsClick = { onBookingsClick() }
                 )
             }
-        ) {
-                innerpadding ->
+        ) { innerpadding ->
             /* if (res.data.isNotEmpty()){
                  LazyColumn(
                      contentPadding = innerpadding,
@@ -218,12 +218,16 @@ fun UserHomeScreen(
                  }
 
              }*/
-            
-            Box(modifier = Modifier
-                .padding(innerpadding)){
-                Column(modifier = Modifier
-                    .padding(start = 10.dp, end = 10.dp)
-                    .verticalScroll(rememberScrollState())){
+
+            Box(
+                modifier = Modifier
+                    .padding(innerpadding)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(start = 10.dp, end = 10.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
 
                     /*SearchBar { searchQuery ->
                         navigateToSearchResult(searchQuery)
@@ -234,40 +238,55 @@ fun UserHomeScreen(
                         navigateToSearchScreen()
                     }
 
-                    Text(text = "Top Yatra Destinations",
+                    Text(
+                        text = "Top Yatra Destinations",
                         style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(top=25.dp, bottom = 10.dp, start = 10.dp, end = 10.dp),
-                        fontWeight = FontWeight.Bold)
-                    
-                   // ImageSlider(images = bannerList)
+                        modifier = Modifier.padding(
+                            top = 25.dp,
+                            bottom = 10.dp,
+                            start = 10.dp,
+                            end = 10.dp
+                        ),
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    // ImageSlider(images = bannerList)
 
                     TopDestinationLayout2(data = topDestinationList1,
-                        navigateToDestination = {searchQuery -> navigateToSearchResult(searchQuery)} )
+                        navigateToDestination = { searchQuery -> navigateToSearchResult(searchQuery) })
                     TopDestinationLayout2(data = topDestinationList2,
-                        navigateToDestination = {searchQuery -> navigateToSearchResult(searchQuery)} )
+                        navigateToDestination = { searchQuery -> navigateToSearchResult(searchQuery) })
 
-                    Text(text = "Yatras Departing from your city",
+                    Text(
+                        text = "Yatras Departing from your city",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top=25.dp, bottom = 10.dp, start = 10.dp, end = 10.dp),
-                        softWrap = true)
+                        modifier = Modifier.padding(
+                            top = 25.dp,
+                            bottom = 10.dp,
+                            start = 10.dp,
+                            end = 10.dp
+                        ),
+                        softWrap = true
+                    )
 
                     /*Text(text = "Your City",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(3.dp))*/
 
-                    LazyRow(modifier = modifier){
-                        items(pagingData.itemCount){
-                                index ->
+                    LazyRow(modifier = modifier) {
+                        items(pagingData.itemCount) { index ->
                             val yatra = pagingData[index]
                             if (yatra != null) {
                                 //YatraCard(item = yatra)
-                                YatraCard4(item = yatra, onCardClick = { yatra.key?.let {
-                                    navigateToYatraDetail(
-                                        it
-                                    )
-                                } })
+                                YatraCard4(item = yatra, onCardClick = {
+                                    yatra.key?.let {
+                                        navigateToYatraDetail(
+                                            it
+                                        )
+                                    }
+                                })
                             }
                         }
                     }
