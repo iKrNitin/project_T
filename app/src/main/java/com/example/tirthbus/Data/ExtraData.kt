@@ -1,12 +1,20 @@
 package com.example.tirthbus.Data
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.Air
+import androidx.compose.material.icons.filled.AirlineSeatReclineExtra
+import androidx.compose.material.icons.filled.AllInbox
+import androidx.compose.material.icons.filled.Bed
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.NoiseControlOff
 import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material.icons.filled.Sos
 import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material.icons.filled.Verified
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -18,6 +26,10 @@ data class FilterChipData(
     val text: String,
     val selected: Boolean,
     val icon: ImageVector? = null
+)
+
+data class inputChipData(
+    val data:Pair<String?,ImageVector>
 )
 
 val filterChips = listOf(
@@ -55,6 +67,16 @@ val topDestinationList2 = listOf<TopDestinations>(
         "Ayodhya"),
     TopDestinations("https://firebasestorage.googleapis.com/v0/b/tirthbus.appspot.com/o/topDestinations%2FTYDPrayagraj.jpg?alt=media&token=38dd0cae-02ff-498d-b120-a0160937001d","Prayagraj"),
     TopDestinations("https://firebasestorage.googleapis.com/v0/b/tirthbus.appspot.com/o/images%2Fc2bac528-71bc-4bdb-9113-15c418da4eed.jpg?alt=media&token=ee55262c-97bd-47c4-83ef-22f22bb5b595","Vaishno Devi"),
+)
+
+// Create a list of pairs of string and image vector
+val list3: List<Pair<String, ImageVector>> = listOf(
+    "Seater" to Icons.Default.AirlineSeatReclineExtra,
+    "Sleeper" to Icons.Default.Bed,
+    "AC" to Icons.Default.AcUnit,
+    "NON-AC" to Icons.Default.Clear,
+    "Water Bottle" to Icons.Default.WaterDrop,
+    "Emergency Contact Number" to Icons.Default.Sos,
 )
 
 @Composable

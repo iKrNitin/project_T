@@ -108,7 +108,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     //ॐ श्री गणेशाय नम:
-                    TandCScreen(navigateBack = { /*TODO*/ })
+                    MyApp()
                     //LocationScreen(currentLocation = currentLocation, context = this@MainActivity)
                 }
             }

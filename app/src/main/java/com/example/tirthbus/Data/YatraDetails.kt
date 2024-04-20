@@ -1,5 +1,7 @@
 package com.example.tirthbus.Data
 
+import androidx.compose.ui.graphics.vector.ImageVector
+
 data class EntityDetailsResponse<T>(
     var entity: T? ,
     var key: String? = "",
@@ -20,6 +22,7 @@ data class YatraDetailsResponse(
         val info: String? = "",
         // Bus Details
         val busType: String? = "",
+        val busType2:List<String?> = emptyList(),
         val numberOfSeats: String? = "",
         val totalAmount: String? = "",
         val bookingAmount: String? = "",

@@ -83,6 +83,7 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -647,6 +648,12 @@ fun YatraCard3(
                 Icon(Icons.Default.LocationOn, contentDescription = null)
                 Text(text = item.yatra!!.yatraLocation!!,
                     style = MaterialTheme.typography.bodyMedium)
+                }
+                Row {
+                    Icon(Icons.Default.Person, contentDescription = null)
+                    Text(text = item.yatra!!.organiserName!!,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold)
                 }
                /* Row {
                     Icon(Icons.Default.Face, contentDescription = null,

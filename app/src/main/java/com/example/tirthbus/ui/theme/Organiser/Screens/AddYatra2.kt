@@ -85,11 +85,16 @@ fun AddYatraScreen2(
                     yatraDetails = uiState.yatraDetails.copy(includesList = selectedList)
                 )},
                 rulesList = viewModel.rulesList,
+                facilityTempList = uiState.yatraDetails.busType2,
                 rulestempList = uiState.yatraDetails.rulesList,
                 onRuleSelected = {selectedList,includestempList ->
                     uiState = uiState.copy(
                     yatraDetails = uiState.yatraDetails.copy(rulesList = selectedList)
                 ) },
+                onFacilitySelected = {selectedList,includestempList ->
+                    uiState = uiState.copy(
+                        yatraDetails = uiState.yatraDetails.copy(busType2 = selectedList)
+                    ) },
                 onNextClick = {
                     navigateToAddYatra3(uiState)
                               Log.d("Yatra","here final ui state is $uiState")
@@ -105,14 +110,16 @@ fun AddYatra2Layout(
     rulesList:List<String?>,
     includestempList:List<String?>,
     rulestempList:List<String?>,
+    facilityTempList:List<String?>,
     onIncludesSelected: (List<String?>, List<String?>) -> Unit,
     onRuleSelected: (List<String?>, List<String?>) -> Unit,
+    onFacilitySelected: (List<String?>, List<String?>) -> Unit,
 ){
     Column(
         modifier = Modifier.padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        AddList2(rulesList,includeslist, includestempList ,rulestempList, onIncludesSelected,onRuleSelected )
+        AddList2(rulesList,includeslist, includestempList ,rulestempList,facilityTempList, onIncludesSelected,onRuleSelected,onFacilitySelected )
 
         Button(
             onClick = onNextClick,
