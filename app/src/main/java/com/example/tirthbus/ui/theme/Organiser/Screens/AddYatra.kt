@@ -136,7 +136,7 @@ fun AddYatraScreen1(
     )
     val context = LocalContext.current
    // val responseList = viewModel.yatraUiState.yatraDetails
-
+    val placeClient = Places.createClient(context)
     val yatraData = viewModel.yatraUiState.yatraDetails
     var dialogState by remember {
         mutableStateOf(false)
@@ -159,6 +159,7 @@ fun AddYatraScreen1(
         {
             AddYatraLayout(
                 yatraUiState = viewModel.yatraUiState,
+                placesClient = placeClient,
                 onYatraValueChange = {yatra -> viewModel.updateUiState(yatra) },
                 onSelectImageClick = {
                     singlePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -199,6 +200,7 @@ fun AddYatraScreen1(
 @Composable
 fun AddYatraLayout(
     modifier: Modifier = Modifier,
+    placesClient: PlacesClient,
     yatraUiState: YatraUiState,
     onYatraValueChange: (YatraDetailsResponse.Yatra) -> Unit,
     onSelectImageClick:() -> Unit,
@@ -219,6 +221,7 @@ fun AddYatraLayout(
             onItemValueChange = onYatraValueChange,
             onSelectImageClick = onSelectImageClick,
             uri = uri,
+            placesClient = placesClient,
             modifier = Modifier.fillMaxWidth())
 
         //AddList2(rulesList,includeslist, includestempList ,rulestempList, onIncludesSelected,onRuleSelected )
@@ -250,6 +253,7 @@ fun AddYatraForm(
     data: YatraDetailsResponse.Yatra,
     modifier: Modifier = Modifier,
     onItemValueChange:(YatraDetailsResponse.Yatra) -> Unit ,
+    placesClient: PlacesClient,
     onSelectImageClick:() -> Unit,
     uri: Uri?,
     enabled: Boolean = true)
@@ -287,13 +291,14 @@ fun AddYatraForm(
                     ))
             }
 
-            data.yatraLocation?.let {
+            /*data.yatraLocation?.let {
                 FormTextBox(
                     value = it,
                     onValueChange = { onItemValueChange(data.copy(yatraLocation = it)) },
                     label = stringResource(id = R.string.ylocation),
                     trailingIcon = { Icon(Icons.Filled.Place, contentDescription = null) })
-            }
+            }*/
+            AutoCompletePlacesScreen(placesClient = placesClient)
 
             data.totalAmount?.let {
                 FormTextBox(value = it,

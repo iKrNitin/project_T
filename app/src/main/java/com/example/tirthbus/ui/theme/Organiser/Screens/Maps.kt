@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -51,7 +52,9 @@ import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompletePrediction
+import com.google.android.libraries.places.api.model.LocationRestriction
 import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.model.PlaceTypes
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -126,7 +129,6 @@ private fun startLocationUpdates() {
     }
 }*/
 
-
 @Composable
 fun AutoCompletePlacesScreen(placesClient: PlacesClient) {
     var query by remember { mutableStateOf(TextFieldValue()) }
@@ -148,6 +150,7 @@ fun AutoCompletePlacesScreen(placesClient: PlacesClient) {
             onPlaceSelected = { place ->
                 query = TextFieldValue(place.name ?: "")
                 selectedPlace = place
+                query = TextFieldValue()
             },
             onPlacesFetched = { newPlaces ->
                 places = newPlaces
@@ -157,7 +160,7 @@ fun AutoCompletePlacesScreen(placesClient: PlacesClient) {
 
     if (selectedPlace != null) {
         // Populate the text field with the selected place
-        query = TextFieldValue(selectedPlace!!.address ?: "")
+        query = TextFieldValue(selectedPlace?.name ?: "")
         // Reset the selected place
         selectedPlace = null
     }
@@ -173,10 +176,14 @@ fun AutocompletePlacesList2(
 ) {
     Column {
         places.take(3).forEach { place ->
+            Card(modifier = Modifier
+                .fillMaxWidth().
+                padding(10.dp).
+                clickable { onPlaceSelected(place) }){
             Text(text = place.name ?: "", modifier = Modifier
-                .padding(8.dp)
-                .clickable { onPlaceSelected(place) })
-            Text(text = place.address ?: "", modifier = Modifier.padding(8.dp))
+                .padding(8.dp))
+            }
+            /*Text(text = place.address ?: "", modifier = Modifier.padding(8.dp))*/
             Divider()
         }
     }
@@ -184,16 +191,13 @@ fun AutocompletePlacesList2(
     LaunchedEffect(query) {
         if (query.isNotEmpty()) {
             try {
-                val response =
-                    placesClient.findAutocompletePredictions(
-                        FindAutocompletePredictionsRequest.newInstance(query)
-                    ).await()
+                val response = placesClient.findAutocompletePredictions(FindAutocompletePredictionsRequest.newInstance(query)).await()
 
                 val predictions = response.autocompletePredictions
 
                 val fetchedPlaces = predictions.map { prediction ->
                     val placeId = prediction.placeId
-                    val placeRequest = FetchPlaceRequest.newInstance(placeId, listOf(Place.Field.NAME, Place.Field.ADDRESS))
+                    val placeRequest = FetchPlaceRequest.newInstance(placeId, listOf(Place.Field.NAME))
                     val fetchPlaceResponse = placesClient.fetchPlace(placeRequest).await()
                     fetchPlaceResponse.place
                 }

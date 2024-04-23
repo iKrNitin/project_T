@@ -54,7 +54,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-   /* private lateinit var placesClient: PlacesClient
+    private lateinit var placesClient: PlacesClient
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private var locationRequired: Boolean = false
@@ -76,20 +76,20 @@ class MainActivity : ComponentActivity() {
                 Looper.getMainLooper()
             )
         }
-    }*/
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        /*fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         Places.initialize(applicationContext, "AIzaSyBw73OMOGz5xtZi-p6Ylr2NMNHZex9zHbc")
-        placesClient = Places.createClient(this)*/
+        placesClient = Places.createClient(this)
         setContent {
             var currentLocation by remember {
                 mutableStateOf(com.google.android.gms.maps.model.LatLng(0.toDouble(), 0.toDouble()))
             }
 
-            /*locationCallback = object : LocationCallback() {
+            locationCallback = object : LocationCallback() {
                 override fun onLocationResult(p0: LocationResult) {
                     super.onLocationResult(p0)
                     for (location in p0.locations) {
@@ -99,7 +99,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
-            }*/
+            }
 
             TirthBusTheme {
                 // A surface container using the 'background' color from the theme
@@ -109,6 +109,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     //ॐ श्री गणेशाय नम:
                     MyApp()
+                   // AutoCompletePlacesScreen(placesClient = placesClient)
                     //LocationScreen(currentLocation = currentLocation, context = this@MainActivity)
                 }
             }
@@ -121,7 +122,7 @@ class MainActivity : ComponentActivity() {
         android.Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
-    /*@Composable
+    @Composable
     fun LocationScreen(
         currentLocation: com.google.android.gms.maps.model.LatLng,
         context: Context
@@ -150,7 +151,7 @@ class MainActivity : ComponentActivity() {
                     if (permissions.all {
                             ContextCompat.checkSelfPermission(
                                 context,
-                                itf
+                                it
                             ) == PackageManager.PERMISSION_GRANTED
                         }) {
                         startLocationUpdates()
@@ -162,5 +163,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }*/
+    }
 }
