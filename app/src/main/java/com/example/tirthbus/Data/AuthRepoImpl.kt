@@ -143,6 +143,25 @@ class AuthRepoImpl @Inject constructor(
         }
     }
 
+    override fun resetOrganiserPasword(organiser: OrganiserDetailsResponse.Organiser): Flow<ResultState<String>> = callbackFlow {
+        trySend(ResultState.Loading)
+
+        if (organiser.organiserEmail!!.isNotEmpty()){
+            Firebase.auth.sendPasswordResetEmail(organiser.organiserEmail).addOnCompleteListener{
+                trySend(ResultState.Success(
+                    "link sent successfully"
+                ))
+                Log.d("Auth","link sent successfully")
+            }
+                .addOnFailureListener{
+                    trySend(ResultState.Failure(it))
+                }
+        }
+        awaitClose{
+            close()
+        }
+    }
+
     override fun addUser(
         user: UserDetailResponse.User
     ): Flow<ResultState<String>> = callbackFlow {
@@ -165,6 +184,131 @@ class AuthRepoImpl @Inject constructor(
                 }
                 .addOnFailureListener{
                     exception -> trySend(ResultState.Failure(exception))
+                }
+            awaitClose{
+                close()
+            }
+        }
+    }
+
+    override fun createOrganiser(organiser: OrganiserDetailsResponse.Organiser): Flow<ResultState<String>> = callbackFlow {
+        Log.d("Auth","create organiser function called ")
+        trySend(ResultState.Loading)
+
+        if (organiser.organiserEmail != null && organiser.organiserEmailPassword != null && organiser.organiserGroupName != null){
+
+            authDb.createUserWithEmailAndPassword(organiser.organiserEmail,organiser.organiserEmailPassword).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    addOrganiser(organiser)
+                    trySend(ResultState.Success("Organiser created Successfully"))
+                    Log.d("Auth", "current organiser id: ${authDb.currentUser?.uid}")
+                } else {
+                    Log.d("Auth", "SignUp Failed")
+                    val exception = it.exception
+                    if (exception is FirebaseAuthWeakPasswordException) {
+                        val reason = exception.reason
+                        Log.d("Auth", "weak password")
+                    } else if (exception is FirebaseAuthInvalidCredentialsException) {
+                        Log.d("Auth", "invalid credentials")
+                    } else if (exception is FirebaseAuthUserCollisionException) {
+                        Log.d("Auth", "user collision")
+                    } else if (exception is FirebaseAuthInvalidUserException) {
+                        Log.d("Auth", "invalid user")
+                    } else if (exception is FirebaseAuthEmailException) {
+                        Log.d("Auth", "email exception")
+                    } else {
+                        Log.d("Auth", "pta nhi kya dikkat hai")
+                    }
+                }
+            }
+                .addOnFailureListener {
+                    trySend(ResultState.Failure(it))
+                }
+        }else{
+            trySend(ResultState.Failure(Exception("Email or password is null")))
+        }
+
+        awaitClose{
+            close()
+        }
+    }
+
+    override fun loginOrganiser(organiser: OrganiserDetailsResponse.Organiser): Flow<ResultState<String>> = callbackFlow {
+        Log.d("Auth","create organiser function called ")
+        trySend(ResultState.Loading)
+
+        if (organiser.organiserEmail != null && organiser.organiserEmailPassword != null){
+
+            authDb.signInWithEmailAndPassword(organiser.organiserEmail,organiser.organiserEmailPassword).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    addOrganiser(organiser)
+                    trySend(ResultState.Success("Organiser logged in Successfully"))
+                    Log.d("Auth", "current organiser id: ${authDb.currentUser?.uid}")
+                } else {
+                    Log.d("Auth", "SignIn Failed")
+                    val exception = it.exception
+                    if (exception is FirebaseAuthWeakPasswordException) {
+                        val reason = exception.reason
+                        Log.d("Auth", "weak password")
+                    } else if (exception is FirebaseAuthInvalidCredentialsException) {
+                        Log.d("Auth", "invalid credentials")
+                    } else if (exception is FirebaseAuthUserCollisionException) {
+                        Log.d("Auth", "user collision")
+                    } else if (exception is FirebaseAuthInvalidUserException) {
+                        Log.d("Auth", "invalid user")
+                    } else if (exception is FirebaseAuthEmailException) {
+                        Log.d("Auth", "email exception")
+                    } else {
+                        Log.d("Auth", "pta nhi kya dikkat hai")
+                    }
+                }
+            }
+                .addOnFailureListener {
+                    trySend(ResultState.Failure(it))
+                }
+        }else{
+            trySend(ResultState.Failure(Exception("Email or password is null")))
+        }
+
+        awaitClose{
+            close()
+        }
+    }
+    override fun logoutOrganiser(organiser: OrganiserDetailsResponse.Organiser): Flow<ResultState<String>>  = callbackFlow {
+        trySend(ResultState.Loading)
+
+        try {
+            Firebase.auth.signOut()
+            trySend(ResultState.Success("Organiser logged out successfully"))
+        }
+        catch (e:Exception){
+            trySend(ResultState.Failure(e))
+        }
+        awaitClose{
+            close( )
+        }
+    }
+
+    override fun addOrganiser(organiser: OrganiserDetailsResponse.Organiser): Flow<ResultState<String>> = callbackFlow {
+        trySend(ResultState.Loading)
+        Log.d("Auth","Trying to add Organiser")
+
+        val currentOrganiser = FirebaseAuth.getInstance().currentUser
+        val organiserId = currentOrganiser?.uid
+
+        if (organiserId != null){
+            val organiserWithOrganiserId= organiser.copy(organiserId = organiserId)
+            Log.d("Auth","Attempting to add organiser with id $organiserId")
+
+            db.collection("Organisers")
+                .add(organiserWithOrganiserId)
+                .addOnSuccessListener {
+                        documentReference ->
+                    trySend(ResultState.Success("${documentReference.id}"))
+                    db.collection("Organisers").document(documentReference.id).set(organiserWithOrganiserId)
+                }
+                .addOnFailureListener{
+                        exception -> trySend(ResultState.Failure(exception))
                 }
             awaitClose{
                 close()

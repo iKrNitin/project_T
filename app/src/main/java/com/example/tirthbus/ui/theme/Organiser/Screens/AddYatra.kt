@@ -34,6 +34,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DateRangePicker
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,6 +51,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -112,6 +114,7 @@ object AddYatraDestination: NavigationDestination {
         get() = R.string.add_yatra
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun AddYatraScreen1(
@@ -197,6 +200,7 @@ fun AddYatraScreen1(
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddYatraLayout(
     modifier: Modifier = Modifier,
@@ -233,7 +237,7 @@ fun AddYatraLayout(
             //enabled = yatraUiState.isEntryValid,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth()) {
-            Text1(text = stringResource(id = R.string.save))
+            Text1(text = stringResource(id = R.string.next))
         }
 
        /* Button(
@@ -247,6 +251,7 @@ fun AddYatraLayout(
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddYatraForm(
@@ -263,6 +268,7 @@ fun AddYatraForm(
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer),
         elevation = CardDefaults.cardElevation(5.dp),
     ) {
+    }
         Column(
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -275,13 +281,15 @@ fun AddYatraForm(
                     ))
             }
 
-            data.date?.let {
+           /*data.date?.let {
                 FormTextBox(
                     value = it,
                     onValueChange = { onItemValueChange(data.copy(date = it)) },
                     label = stringResource(id = R.string.Date),
                     trailingIcon = { Icon(Icons.Filled.DateRange, contentDescription = null) })
-            }
+            }*/
+
+            DatePicker2()
 
             data.yatraTime?.let {
                 FormTextBox(value = it,
@@ -291,14 +299,14 @@ fun AddYatraForm(
                     ))
             }
 
-            /*data.yatraLocation?.let {
+            data.yatraLocation?.let {
                 FormTextBox(
                     value = it,
                     onValueChange = { onItemValueChange(data.copy(yatraLocation = it)) },
                     label = stringResource(id = R.string.ylocation),
                     trailingIcon = { Icon(Icons.Filled.Place, contentDescription = null) })
-            }*/
-            AutoCompletePlacesScreen(placesClient = placesClient)
+            }
+           // AutoCompletePlacesScreen(placesClient = placesClient)
 
             data.totalAmount?.let {
                 FormTextBox(value = it,
@@ -323,7 +331,6 @@ fun AddYatraForm(
                 )
             }
         }
-    }
 
    /* Button(
         onClick = onSelectImageClick,
@@ -346,6 +353,16 @@ fun AddYatraForm(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePicker2(){
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        // Pre-select a date for January 4, 2020
+        val state = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
+        androidx.compose.material3.DatePicker(state = state,modifier = Modifier.padding(16.dp))
+    }
+}
 @Composable
 fun AddContactForm(
     data: YatraDetailsResponse.Yatra,
@@ -559,9 +576,10 @@ fun DatePicker(){
 @Composable
 fun AddYatraPreview(){
     TirthBusTheme {
-        AddContactForm(
+        /*AddContactForm(
             data = YatraDetailsResponse.Yatra(organiserName = "Nitin Kumar"),
             onItemValueChange = {}
-        )
+        )*/
+        DatePicker2()
     }
 }

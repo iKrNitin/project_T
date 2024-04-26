@@ -101,7 +101,8 @@ class AddYatraViewModel @Inject constructor(private val repo: YatraRepo):ViewMod
         "रहना ठहरना",
         "सुबह का नाश्ता",
         "दोपहर का भोजन",
-        "रात्रि भोजन",)
+        "रात्रि भोजन",
+        "जलपान")
 
     var rulesList = listOf<String>(
         "यात्रा रद्द करने पर अग्रिम भुगतान वापस नहीं किया जाएगा",

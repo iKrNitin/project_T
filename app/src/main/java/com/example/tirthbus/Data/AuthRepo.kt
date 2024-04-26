@@ -13,6 +13,14 @@ interface AuthRepo {
 
     fun addUser(user: UserDetailResponse.User): Flow<ResultState<String>>
 
+    fun createOrganiser(organiser:OrganiserDetailsResponse.Organiser): Flow<ResultState<String>>
+
+    fun loginOrganiser(organiser: OrganiserDetailsResponse.Organiser): Flow<ResultState<String>>
+
+    fun logoutOrganiser(organiser: OrganiserDetailsResponse.Organiser): Flow<ResultState<String>>
+
+    fun addOrganiser(organiser: OrganiserDetailsResponse.Organiser): Flow<ResultState<String>>
+
     fun uploadUserProfile(user: UserDetailResponse.User, uri: Uri, context: Context, type:String): Flow<ResultState<String>>
 
    /* fun fetchUserDetail(userId:String):Flow<ResultState<UserDetail>>*/
@@ -23,9 +31,9 @@ interface AuthRepo {
 
     fun updateUser(user:UserDetail): Flow<ResultState<String>>*/
 
-    fun resetPassword(auth: UserDetailResponse.User):
-            Flow<ResultState<String>>
+    fun resetPassword(auth: UserDetailResponse.User): Flow<ResultState<String>>
+
+    fun resetOrganiserPasword(organiser: OrganiserDetailsResponse.Organiser) : Flow<ResultState<String>>
 
     fun checkUserLoggedIn():Boolean
 }
-

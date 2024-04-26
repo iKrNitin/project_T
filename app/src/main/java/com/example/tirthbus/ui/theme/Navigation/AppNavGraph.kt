@@ -1,5 +1,7 @@
 package com.example.tirthbus.ui.theme.Navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -15,6 +17,10 @@ import com.example.tirthbus.ui.theme.Organiser.Screens.AddYatraScreen2
 import com.example.tirthbus.ui.theme.Organiser.Screens.AddYatraScreen3
 import com.example.tirthbus.ui.theme.Organiser.Screens.OrganiserHomeScreen
 import com.example.tirthbus.ui.theme.Organiser.Screens.OrganiserHomeScreenDestination
+import com.example.tirthbus.ui.theme.Organiser.Screens.OrganiserSignInScreen
+import com.example.tirthbus.ui.theme.Organiser.Screens.OrganiserSignUpDestination
+import com.example.tirthbus.ui.theme.Organiser.Screens.OrganiserSignUpScreen
+import com.example.tirthbus.ui.theme.Organiser.Screens.OrganiserSigninDestination
 import com.example.tirthbus.ui.theme.Organiser.ViewModel.YatraUiState
 import com.example.tirthbus.ui.theme.User.User.Screens.SearchResultScreen
 import com.example.tirthbus.ui.theme.User.User.Screens.SearchResultsDestination
@@ -35,6 +41,7 @@ import com.example.tirthbus.ui.theme.User.User.Screens.YatraDetailsScreenDestina
 import com.google.firebase.firestore.auth.User
 import com.google.gson.Gson
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavHost(
     navController: NavHostController,
@@ -49,7 +56,7 @@ fun AppNavHost(
 
         composable(route = UserHomeScreenDestination.route){
             UserHomeScreen(
-                navigateToOraganiser = {navController.navigate(OrganiserHomeScreenDestination.route)},
+                navigateToOraganiser = {navController.navigate(OrganiserSignUpDestination.route)},
                 navigateToYatraDetail = {
                         yatraId -> navController.navigate("${YatraDetailsScreenDestination.route}/$yatraId")
                 },
@@ -137,6 +144,18 @@ fun AppNavHost(
 
         composable(route = SignInScreenDestination.route){
             SignInScreen(navigateToHomeScreen = {navController.navigate(UserHomeScreenDestination.route)})
+        }
+
+        composable(route = OrganiserSignUpDestination.route){
+            OrganiserSignUpScreen(
+                navigateToOrganiserHomeScreen = {navController.navigate(OrganiserHomeScreenDestination.route)},
+                navigateToOrganiserSignInScreen = { navController.navigate(OrganiserSigninDestination.route) })
+        }
+
+        composable(route = OrganiserSigninDestination.route){
+            OrganiserSignInScreen(
+                navigateToOrganiserHomeScreen = {navController.navigate(OrganiserHomeScreenDestination.route)},
+               navigateToForgotPasswordScreen = {})
         }
 
         composable(route = YatraDetailsScreenDestination.route + "/{yatraId}",

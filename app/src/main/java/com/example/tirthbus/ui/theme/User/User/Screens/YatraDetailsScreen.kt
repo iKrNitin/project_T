@@ -359,15 +359,15 @@ fun ContactDetailSection(
 
         Column(modifier = Modifier.padding(5.dp)) {
 
-            Text(text = "संपर्क करें:-", fontWeight = FontWeight.Bold)
+            //Text(text = stringResource(id = R.string.Organiser), fontWeight = FontWeight.Bold)
 
             if (item != null) {
                 TextRow(text1 = stringResource(id = R.string.Organiser), tex2 = item.yatra?.organiserName ?: "")
             }
-
+            /*
             if (item != null) {
                 TextRow(text1 = item.yatra?.contactName1?:"", tex2 = item.yatra?.contactPhn1 ?: "")
-            }
+            }*/
 
             Button(onClick = {onCallClick()},
                 modifier = Modifier
@@ -375,7 +375,7 @@ fun ContactDetailSection(
                     .padding(5.dp),
                 shape = MaterialTheme.shapes.large) {
                 Icon(Icons.Default.Call ,contentDescription = null)
-                Text(text = " कॉल करें",)
+                Text(text = " सीट बुक करें ",)
             }
 
            /* if (item != null) {
