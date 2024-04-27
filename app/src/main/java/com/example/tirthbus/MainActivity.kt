@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.widget.Toast
@@ -11,6 +12,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +36,7 @@ import com.example.tirthbus.ui.theme.Organiser.Screens.AddYatraScreen2
 import com.example.tirthbus.ui.theme.Organiser.Screens.AutoCompletePlacesScreen
 import com.example.tirthbus.ui.theme.Organiser.Screens.GetCurrentLocation
 import com.example.tirthbus.ui.theme.Organiser.Screens.MainScreen
+import com.example.tirthbus.ui.theme.Organiser.Screens.PhoneAuthScreen
 import com.example.tirthbus.ui.theme.Organiser.Screens.TandCScreen
 import com.example.tirthbus.ui.theme.Theme.TirthBusTheme
 import com.example.tirthbus.ui.theme.User.User.Screens.SearchBar
@@ -78,6 +81,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -108,7 +112,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     //ॐ श्री गणेशाय नम:
-                    MyApp()
+                    //MyApp()
+                    PhoneAuthScreen(activity = this)
                    // AutoCompletePlacesScreen(placesClient = placesClient)
                     //LocationScreen(currentLocation = currentLocation, context = this@MainActivity)
                 }

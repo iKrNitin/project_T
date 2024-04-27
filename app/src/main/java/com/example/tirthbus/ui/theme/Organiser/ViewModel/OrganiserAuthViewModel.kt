@@ -1,5 +1,6 @@
 package com.example.tirthbus.ui.theme.Organiser.ViewModel
 
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.util.Log
@@ -45,7 +46,7 @@ class OrganiserAuthViewModel @Inject constructor(private val repo:AuthRepo) : Vi
 
     fun forgotPassword(organiser: OrganiserDetailsResponse.Organiser) = repo.resetOrganiserPasword(organiser)
 
-    fun logoutUser(organiser: OrganiserDetailsResponse.Organiser) = repo.logoutOrganiser(organiser)
+    fun logoutOrganiser(organiser: OrganiserDetailsResponse.Organiser) = repo.logoutOrganiser(organiser)
 
     fun addOrganiser(organiser: OrganiserDetailsResponse.Organiser){
         viewModelScope.launch {
@@ -62,4 +63,8 @@ class OrganiserAuthViewModel @Inject constructor(private val repo:AuthRepo) : Vi
             }
         }
     }
+
+    fun createOrganiserWithPhone(phone:String,activity: Activity) = repo.createUserWithPhone(phone,activity)
+
+    fun signInWithCredential(code:String) = repo.signWithOtp(code)
 }

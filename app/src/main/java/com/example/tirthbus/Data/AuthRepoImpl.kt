@@ -1,15 +1,20 @@
 package com.example.tirthbus.Data
 
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.google.firebase.Firebase
+import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthEmailException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
@@ -19,6 +24,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class AuthRepoImpl @Inject constructor(
@@ -26,6 +32,58 @@ class AuthRepoImpl @Inject constructor(
     private val db: FirebaseFirestore,
     private val storage:FirebaseStorage
 ) : AuthRepo{
+
+    private lateinit var onVerificationCode:String
+    override fun createUserWithPhone(phone: String,activity: Activity ): Flow<ResultState<String>> = callbackFlow {
+        trySend(ResultState.Loading)
+        Log.d("Auth","Trying to authenticate with phone number")
+
+        val onVerificationCallback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
+            override fun onVerificationCompleted(p0: PhoneAuthCredential) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onVerificationFailed(p0: FirebaseException) {
+                trySend(ResultState.Failure(p0))
+                Log.d("Auth","OTP not Sent Successfully")
+            }
+
+            override fun onCodeSent(verificationCode: String, p1: PhoneAuthProvider.ForceResendingToken) {
+                super.onCodeSent(verificationCode, p1)
+                trySend(ResultState.Success("OTP Sent Successfully"))
+                Log.d("Auth","OTP Sent Successfully")
+                onVerificationCode = verificationCode
+            }
+
+        }
+
+        val options = PhoneAuthOptions.newBuilder(authDb)
+            .setPhoneNumber("+91$phone")
+            .setTimeout(60L,TimeUnit.SECONDS)
+            .setActivity(activity)
+            .setCallbacks(onVerificationCallback)
+            .build()
+        PhoneAuthProvider.verifyPhoneNumber(options)
+        awaitClose{
+            close()
+        }
+    }
+
+    override fun signWithOtp(otp: String): Flow<ResultState<String>> = callbackFlow {
+        trySend(ResultState.Loading)
+        val credential = PhoneAuthProvider.getCredential(onVerificationCode,otp)
+        authDb.signInWithCredential(credential)
+            .addOnCompleteListener{
+                if (it.isSuccessful){
+                    trySend(ResultState.Success("otp verified"))
+                }
+            }.addOnFailureListener{
+                trySend(ResultState.Failure(it))
+            }
+        awaitClose {
+            close()
+        }
+    }
 
     override fun createUser(auth: UserDetailResponse.User): Flow<ResultState<String>> = callbackFlow {
         Log.d("main","create user function called ")
@@ -429,7 +487,6 @@ class AuthRepoImpl @Inject constructor(
             close()
         }
     }
-
 
     override fun checkUserLoggedIn(): Boolean {
         return authDb.currentUser != null

@@ -1,5 +1,7 @@
 package com.example.tirthbus
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -35,20 +37,23 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.tirthbus.ui.theme.Navigation.AppNavHost
+import com.example.tirthbus.ui.theme.Organiser.Screens.OrganiserHomeScreenDestination
+import com.example.tirthbus.ui.theme.Organiser.Screens.OrganiserSignUpDestination
 import com.example.tirthbus.ui.theme.User.User.Screens.SignUpScreenDestination
 import com.example.tirthbus.ui.theme.User.User.Screens.UserHomeScreenDestination
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MyApp(navController: NavHostController = rememberNavController()){
     LaunchedEffect(navController){
         val user = Firebase.auth.currentUser
         if (user != null){
-            navController.navigate(UserHomeScreenDestination.route)
+            navController.navigate(OrganiserHomeScreenDestination.route)
         }
         else{
-            navController.navigate(SignUpScreenDestination.route)
+            navController.navigate(OrganiserSignUpDestination.route)
         }
     }
     AppNavHost(navController = navController)

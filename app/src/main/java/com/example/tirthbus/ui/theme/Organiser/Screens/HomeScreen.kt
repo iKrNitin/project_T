@@ -36,11 +36,12 @@ import com.example.tirthbus.AppTopBar
 import com.example.tirthbus.R
 import com.example.tirthbus.ui.theme.Navigation.NavigationDestination
 import com.example.tirthbus.ui.theme.Organiser.ViewModel.OhomeViewModel
+import com.example.tirthbus.ui.theme.Organiser.ViewModel.OrganiserAuthViewModel
 import com.example.tirthbus.ui.theme.Theme.TirthBusTheme
 import com.example.tirthbus.ui.theme.User.User.Screens.YatraCard
 import kotlinx.coroutines.launch
 
-object OrganiserHomeScreenDestination : NavigationDestination {
+object     OrganiserHomeScreenDestination : NavigationDestination {
     override val route: String
         get() = "Organiser_Home_Screen"
     override val titleRes: Int
@@ -52,7 +53,9 @@ object OrganiserHomeScreenDestination : NavigationDestination {
 fun OrganiserHomeScreen(
     navigateToUser: () -> Unit,
     navigateToAddYatra: () -> Unit,
+    navigateToOrganiserSignUp: () -> Unit,
     viewModel: OhomeViewModel = hiltViewModel(),
+    viewModel2: OrganiserAuthViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ){
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -73,7 +76,7 @@ fun OrganiserHomeScreen(
                 NavigationDrawerItem(
                     label = { Text(text = stringResource(id = R.string.user)) },
                     selected = false,
-                    onClick = { navigateToUser() },
+                    onClick = {},
                     icon = { Icon(imageVector = Icons.Filled.Face, contentDescription = "hey") })
 
                 NavigationDrawerItem(
@@ -96,7 +99,8 @@ fun OrganiserHomeScreen(
                     title = stringResource(id = R.string.Organiser), canNavigateBack = false,
                     onDrawerClick = {scope.launch { drawerState.open() }},
                     scrollBehavior = appScrollBehavior,
-                    navigateToSignUpScreen = {})
+                    navigateToSignUpScreen = {viewModel2.logoutOrganiser(viewModel2.signUpUiState)
+                        })
             },
             floatingActionButton = {
                 //Using Box and Align to center FAB

@@ -1,10 +1,14 @@
 package com.example.tirthbus.Data
 
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepo {
+    fun createUserWithPhone(phone:String,activity:Activity):Flow<ResultState<String>>
+
+    fun signWithOtp(otp:String):Flow<ResultState<String>>
     fun createUser(auth:UserDetailResponse.User): Flow<ResultState<String>>
 
     fun loginUser(auth: UserDetailResponse.User): Flow<ResultState<String>>

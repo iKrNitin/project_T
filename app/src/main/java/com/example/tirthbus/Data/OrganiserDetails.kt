@@ -6,9 +6,12 @@ data class OrganiserDetailsResponse(
 {
     data class Organiser(
         val organiserId: String? = "",
-        val organiserGroupName:String? = "",
         val organiserEmail:String? = "",
         val organiserEmailPassword:String? = "",
+        val organiserGroupName:String? = "",
+        val organiserName:String? = "",
         val organiserPhnNumber:String? = "",
+        val organiserPhnNumber2:String? = "",
+        val organiserAddress:String? = "",
     )
 }

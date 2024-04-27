@@ -50,13 +50,14 @@ fun AppNavHost(
     NavHost(
         navController = navController,
         //startDestination = UserHomeScreenDestination.route,
-        startDestination = SignUpScreenDestination.route,
+        startDestination = OrganiserSignUpDestination.route,
         modifier = modifier
     ){
 
         composable(route = UserHomeScreenDestination.route){
             UserHomeScreen(
-                navigateToOraganiser = {navController.navigate(OrganiserSignUpDestination.route)},
+                navigateToOraganiserHomeScreen = {navController.navigate(OrganiserHomeScreenDestination.route)},
+                navigateToOrganiserSignUpScreen = {navController.navigate(OrganiserSignUpDestination.route)},
                 navigateToYatraDetail = {
                         yatraId -> navController.navigate("${YatraDetailsScreenDestination.route}/$yatraId")
                 },
@@ -84,7 +85,8 @@ fun AppNavHost(
 
         composable(route = OrganiserHomeScreenDestination.route){
             OrganiserHomeScreen(navigateToUser = {navController.navigate(UserHomeScreenDestination.route)},
-                navigateToAddYatra = {navController.navigate(AddYatraDestination.route)})
+                navigateToAddYatra = {navController.navigate(AddYatraDestination.route)},
+                navigateToOrganiserSignUp = {navController.navigate(OrganiserSignUpDestination.route)})
         }
 
         composable(route = AddYatraDestination.route){

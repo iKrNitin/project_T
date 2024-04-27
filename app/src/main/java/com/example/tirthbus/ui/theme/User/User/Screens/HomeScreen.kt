@@ -104,6 +104,7 @@ import com.example.tirthbus.ui.theme.Organiser.Screens.GetCurrentLocation
 import com.example.tirthbus.ui.theme.Theme.TirthBusTheme
 import com.example.tirthbus.ui.theme.User.User.ViewModel.HomeViewModel
 import com.example.tirthbus.ui.theme.User.User.ViewModel.UserAuthViewModel
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -117,7 +118,8 @@ object UserHomeScreenDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserHomeScreen(
-    navigateToOraganiser:()->Unit,
+    navigateToOraganiserHomeScreen:()->Unit,
+    navigateToOrganiserSignUpScreen:()->Unit,
     navigateToYatraDetail: (String) -> Unit,
     navigateToSearchResult:(String) -> Unit,
     navigateToSearchScreen:() -> Unit,
@@ -162,7 +164,7 @@ fun UserHomeScreen(
                 NavigationDrawerItem(
                     label = { Text(text = stringResource(id = R.string.Organiser)) },
                     selected = false,
-                    onClick = { navigateToOraganiser() },
+                    onClick = {navigateToOraganiserHomeScreen()},
                     icon = { Icon(imageVector = Icons.Filled.Person, contentDescription = "hey") })
 
                 NavigationDrawerItem(

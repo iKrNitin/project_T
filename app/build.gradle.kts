@@ -71,6 +71,9 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-appcheck-playintegrity")
+    implementation("com.google.firebase:firebase-appcheck-debug")
+
     //implementation("com.google.firebase:firebase-firestore:24.10.0")
     kapt("com.google.dagger:hilt-compiler:2.50")
     kapt("androidx.hilt:hilt-compiler:1.2.0")
