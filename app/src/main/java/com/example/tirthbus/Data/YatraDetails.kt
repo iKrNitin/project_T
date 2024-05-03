@@ -1,28 +1,26 @@
 package com.example.tirthbus.Data
 
-import androidx.compose.ui.graphics.vector.ImageVector
-
 data class EntityDetailsResponse<T>(
-    var entity: T? ,
+    var entity: T?,
     var key: String? = "",
 )
 
 data class YatraDetailsResponse(
-    var yatra:Yatra? ,
+    var yatra:Yatra?,
     var key:String? = "",
 ) {
     data class Yatra (
         // Basic Details
-        val yatraName: String? = "",
-        val date: String? = "",
-        //val arrivalDate: String? = "",
-        val yatraTime: String? = "",
-        val yatraLocation: String? = "",
+        val yatraTitle: String? = "",
+        val departureDate: String? = "",
+        val departureTime: String? = "",
+        val arrivalDate: String? = "",
+        val arrivalTime: String? = "",
+        val departurePoint:String? = "",
         val imageUrl: String? = "",
-        val info: String? = "",
+        val yatraDescription: String? = "",
         // Bus Details
-        val busType: String? = "",
-        val busType2:List<String?> = emptyList(),
+        val busFacilities:List<String?> = emptyList(),
         val numberOfSeats: String? = "",
         val totalAmount: String? = "",
         val bookingAmount: String? = "",
@@ -33,11 +31,6 @@ data class YatraDetailsResponse(
         val rulesList:List<String?> = emptyList(),
         // Contact Details
         val organiserName: String? = "",
-        val contactName1: String? = "",
-        val contactPhn1: String? = "",
-        val contactName2: String? = "",
-        val contactPhn2: String? = "",
-        val paymentMethod: String? = ""
     )
 }
 
@@ -53,4 +46,3 @@ data class YatraDetailsResponse(
         val userPhnNumber:String? = ""
     )
 }*/
-

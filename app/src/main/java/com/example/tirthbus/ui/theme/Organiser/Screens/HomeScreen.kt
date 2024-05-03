@@ -76,7 +76,7 @@ fun OrganiserHomeScreen(
                 NavigationDrawerItem(
                     label = { Text(text = stringResource(id = R.string.user)) },
                     selected = false,
-                    onClick = {},
+                    onClick = {navigateToUser()},
                     icon = { Icon(imageVector = Icons.Filled.Face, contentDescription = "hey") })
 
                 NavigationDrawerItem(

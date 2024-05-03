@@ -112,8 +112,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     //ॐ श्री गणेशाय नम:
-                    //MyApp()
-                    PhoneAuthScreen(activity = this)
+                    MyApp()
                    // AutoCompletePlacesScreen(placesClient = placesClient)
                     //LocationScreen(currentLocation = currentLocation, context = this@MainActivity)
                 }

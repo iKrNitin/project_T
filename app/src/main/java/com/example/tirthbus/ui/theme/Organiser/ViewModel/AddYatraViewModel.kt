@@ -3,8 +3,6 @@ package com.example.tirthbus.ui.theme.Organiser.ViewModel
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.compose.material3.SnackbarData
-import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -30,23 +28,9 @@ class AddYatraViewModel @Inject constructor(private val repo: YatraRepo):ViewMod
             isEntryValid = validateInput(newYatraDetails) )
     }
 
-    //Function to update specific field
-    fun updateSpecificFields(updatedFields:YatraDetailsResponse.Yatra){
-        val currentDetails = yatraUiState.yatraDetails.copy(
-            organiserName = updatedFields.organiserName,
-            contactName1 = updatedFields.contactName1 ?: yatraUiState.yatraDetails.contactName1,
-            contactPhn1 = updatedFields.contactPhn1 ?: yatraUiState.yatraDetails.contactPhn1,
-        )
-        updateUiState(currentDetails)
-    }
-
-    fun updateUiState2(newYatraDetails:YatraDetailsResponse.Yatra){
-        yatraUiState.yatraDetails.copy(contactName1 = newYatraDetails.contactName1)
-    }
-
     private fun validateInput(uiState: YatraDetailsResponse.Yatra = yatraUiState.yatraDetails): Boolean{
         return with(uiState){
-            yatraName!!.isNotBlank() && date!!.isNotBlank()
+            yatraTitle!!.isNotBlank() && departureDate!!.isNotBlank()
         }
     }
 

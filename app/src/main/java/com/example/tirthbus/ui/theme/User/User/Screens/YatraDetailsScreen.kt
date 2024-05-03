@@ -7,11 +7,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +17,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,16 +27,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -51,7 +42,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
@@ -61,21 +51,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.example.tirthbus.AppTopBar
 import com.example.tirthbus.Data.ResultState
 import com.example.tirthbus.Data.YatraDetailsResponse
 import com.example.tirthbus.R
@@ -130,7 +117,7 @@ fun YatraDetailScreen(
 
         is ResultState.Success -> {
             YatraDetailsLayout(item = yatraState.data, modifier = Modifier.padding(innerpadding),
-                onCallClick = {viewModel.callMember(number = yatraState.data?.yatra?.contactPhn1!!, context = context)})
+                onCallClick = {})
         }
 
         is ResultState.Failure -> {
@@ -162,6 +149,7 @@ fun YatraDetailsLayout(
         }
         BasicDetailSection(item = item)
         //BusDetailSection(item = item)
+        ListSection(item = item)
         CollapsibleListSection(sectionTitle = "यात्रा में शामिल हैं:-", items = item?.yatra!!.includesList )
         //YatraDescriptionSection(item = item)
         if (item != null) {
@@ -250,39 +238,20 @@ fun BasicDetailSection(
         modifier = Modifier.fillMaxWidth()
     ) {
 
-        Column(modifier = Modifier.padding(1.dp)) {
+        Column(modifier = Modifier.padding(start = 5.dp)) {
             if (item != null) {
-                Text(text = item.yatra?.yatraName ?: "",
+                Text(text = item.yatra?.yatraTitle ?: "",
                     fontWeight = FontWeight.Bold,
                     style = typography.titleLarge
                     )
             }
             Spacer(modifier = Modifier.height(10.dp))
-            Row {
-                Icon(Icons.Default.DateRange, contentDescription = null)
-                Spacer(modifier = Modifier.width(5.dp))
-                if (item != null) {
-                    item.yatra?.date?.let { Text(text = it + "  (${item.yatra!!.yatraTime})",
-                        fontWeight = FontWeight.Bold) }
-                }
-            }
+            TextRow(text1 = "Departure Date - ", tex2 = item?.yatra?.departureDate?:"")
+            TextRow(text1 = "Arrival Date - ", tex2 = item?.yatra?.arrivalDate?:"")
+            TextRow(text1 = "Departure Point - ", tex2 = item?.yatra?.departurePoint?:"")
 
-               /* if (item != null) {
-                    TextRow(text1 = stringResource(id = R.string.arrivaldate), tex2 = item.yatra?.arrivalDate ?: "")
-                }*/
+            TextRow(text1 = stringResource(id = R.string.totalFare), tex2 = item?.yatra?.totalAmount ?: "")
 
-            Row {
-                Icon(Icons.Default.LocationOn, contentDescription = null)
-                Spacer(modifier = Modifier.width(5.dp))
-                if (item != null) {
-                    item.yatra?.yatraLocation?.let { Text(text = it,
-                        fontWeight = FontWeight.Bold) }
-                }
-            }
-            Spacer(modifier = Modifier.height(2.dp))
-            if (item != null) {
-                TextRow(text1 = stringResource(id = R.string.totalFare), tex2 = item.yatra?.totalAmount ?: "")
-            }
             if (item != null) {
                 TextRow(text1 = stringResource(id = R.string.bookingAmount), tex2 = item.yatra?.bookingAmount ?: "")
             }
@@ -301,7 +270,7 @@ fun Send(
 
     val sendIntent: Intent = Intent().apply {
         action = Intent.ACTION_SEND
-    putExtra(Intent.EXTRA_TEXT,"\"${item!!.yatra!!.organiserName} द्वारा आयोजित बस यात्रा ${item.yatra!!.date} को ${item.yatra!!.yatraName} जा रही है जिसका किराया ${item.yatra!!.includesList} सहित ${item.yatra!!.totalAmount} रुपए प्रति सवारी है जो भी सज्जन जाना चाहे वह बुकिंग राशि देकर अपनी सीट बुक करा ले।\"\n")
+    putExtra(Intent.EXTRA_TEXT,"\"${item!!.yatra!!.organiserName} द्वारा आयोजित बस यात्रा ${item.yatra!!.departureDate} को ${item.yatra!!.yatraTitle} जा रही है जिसका किराया ${item.yatra!!.includesList} सहित ${item.yatra!!.totalAmount} रुपए प्रति सवारी है जो भी सज्जन जाना चाहे वह बुकिंग राशि देकर अपनी सीट बुक करा ले।\"\n")
     type = "text/plain"}
     val shareIntent = Intent.createChooser(sendIntent, null)
     Button(onClick = {shareLauncher.launch(shareIntent)},
@@ -402,7 +371,7 @@ fun ListSection(
     ) {
 
         Column(modifier = Modifier.padding(5.dp)) {
-            Text(text = "यात्रा में शामिल हैं:-")
+            Text(text = "Bus Facilities")
             FlowRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -410,7 +379,7 @@ fun ListSection(
                 maxItemsInEachRow = 1
             ){
                 if (item != null) {
-                    item.yatra?.includesList?.forEach() { item ->
+                    item.yatra?.busFacilities?.forEach() { item ->
                         // Replace Text with the composable you want to use to display each item
                         Text(text = item.toString(), modifier = Modifier.padding(8.dp))
                     }
@@ -528,7 +497,7 @@ fun YatraDescriptionSection(
                 )
             }
             if (item != null) {
-                item.yatra?.info?.let { Text(text = it) }
+                item.yatra?.yatraDescription?.let { Text(text = it) }
             }
         }
     }
@@ -547,7 +516,7 @@ fun TextRow(text1:String,tex2:String){
 @Composable
 fun YatraDetailScreenPreview(){
     TirthBusTheme {
-        YatraDetailsLayout(item = YatraDetailsResponse(YatraDetailsResponse.Yatra("Shri Khatushyam ji dham yatra","23 may 2034","raat 4 bje", organiserName = "Nitin Kumar", contactName1 = "Nitin Kumar", contactPhn1 = "8130647073", includesList = listOf("item1","item2","item3","item4"))),
+        YatraDetailsLayout(item = YatraDetailsResponse(YatraDetailsResponse.Yatra("Shri Khatushyam ji dham yatra","23 may 2034","raat 4 bje", organiserName = "Nitin Kumar", includesList = listOf("item1","item2","item3","item4"), rulesList = listOf("rule1","rule2","rule3","rule4"), busFacilities = listOf("AC Bus","SEater","WaterBottle"))),
             onCallClick = {})
        /* CollapsibleListSection2(sectionTitle = "Includes", items = listOf("item1","item2","item3","item4") )*/
     }

@@ -49,8 +49,8 @@ fun AppNavHost(
 ){
     NavHost(
         navController = navController,
-        //startDestination = UserHomeScreenDestination.route,
-        startDestination = OrganiserSignUpDestination.route,
+        startDestination = UserHomeScreenDestination.route,
+        //startDestination = OrganiserSignUpDestination.route,
         modifier = modifier
     ){
 

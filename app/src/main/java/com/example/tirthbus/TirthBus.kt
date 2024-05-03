@@ -50,10 +50,10 @@ fun MyApp(navController: NavHostController = rememberNavController()){
     LaunchedEffect(navController){
         val user = Firebase.auth.currentUser
         if (user != null){
-            navController.navigate(OrganiserHomeScreenDestination.route)
+            navController.navigate(UserHomeScreenDestination.route)
         }
         else{
-            navController.navigate(OrganiserSignUpDestination.route)
+            navController.navigate(SignUpScreenDestination.route)
         }
     }
     AppNavHost(navController = navController)

@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -75,7 +74,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
@@ -83,7 +81,6 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -104,7 +101,6 @@ import com.example.tirthbus.ui.theme.Organiser.Screens.GetCurrentLocation
 import com.example.tirthbus.ui.theme.Theme.TirthBusTheme
 import com.example.tirthbus.ui.theme.User.User.ViewModel.HomeViewModel
 import com.example.tirthbus.ui.theme.User.User.ViewModel.UserAuthViewModel
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -519,7 +515,7 @@ fun YatraCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
-            item.yatra?.yatraName.let {
+            item.yatra?.yatraTitle.let {
                 it?.let { it1 ->
                     Text(text = it1,
                         style = MaterialTheme.typography.titleLarge,
@@ -530,11 +526,11 @@ fun YatraCard(
                 }
             }
 
-            item.yatra?.date.let { it?.let { it1 -> YatraCardRow(rowText = "दिनांक - ", it1) } }
+            item.yatra?.departureDate.let { it?.let { it1 -> YatraCardRow(rowText = "दिनांक - ", it1) } }
 
-            item.yatra?.yatraLocation.let { it?.let { it1 -> YatraCardRow(rowText = "स्थान - ", rowText1 = it1) } }
+            item.yatra?.departurePoint.let { it?.let { it1 -> YatraCardRow(rowText = "स्थान - ", rowText1 = it1) } }
 
-            item.yatra?.yatraTime?.let { YatraCardRow(rowText = "समय - ", rowText1 = it) }
+            item.yatra?.departureTime?.let { YatraCardRow(rowText = "समय - ", rowText1 = it) }
         }
     }
 }
@@ -575,7 +571,7 @@ fun YatraCard2(
             // Align content to the bottom of the card
         ) {
             Text(
-                text = item.yatra?.yatraName ?: "",
+                text = item.yatra?.yatraTitle ?: "",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 fontSize = 25.sp,
@@ -583,11 +579,11 @@ fun YatraCard2(
             )
             Spacer(modifier = Modifier.height(8.dp)) // Add space between text fields
             Text(
-                text = "दिनांक - ${item.yatra?.date ?: ""}",
+                text = "दिनांक - ${item.yatra?.departureDate ?: ""}",
                 color = Color.Black // Text color
             )
             Text(
-                text = "स्थान - ${item.yatra?.yatraLocation ?: ""}",
+                text = "स्थान - ${item.yatra?.departurePoint ?: ""}",
                 color = Color.Black // Text color
             )
             /*Text(
@@ -622,14 +618,14 @@ fun YatraCard3(
                     .fillMaxWidth(0.3f))
 
             FlowColumn(modifier = Modifier.padding(5.dp)) {
-                item.yatra?.yatraName?.let {
+                item.yatra?.yatraTitle?.let {
                     Text(text = it,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,)
                 }
                 Row() {
                     Icon(Icons.Default.CalendarMonth, contentDescription = null )
-                    item.yatra?.date?.let {
+                    item.yatra?.departureDate?.let {
                         Text(text = it,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.weight(0.5f))
@@ -648,7 +644,7 @@ fun YatraCard3(
                 }
                 Row {
                 Icon(Icons.Default.LocationOn, contentDescription = null)
-                Text(text = item.yatra!!.yatraLocation!!,
+                Text(text = item.yatra!!.departurePoint!!,
                     style = MaterialTheme.typography.bodyMedium)
                 }
                 Row {
@@ -698,14 +694,14 @@ fun YatraCard4(
                     .fillMaxHeight(1f))
 
             FlowColumn(modifier = Modifier.padding(5.dp)) {
-                item.yatra?.yatraName?.let {
+                item.yatra?.yatraTitle?.let {
                     Text(text = it,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,)
                 }
                 Row() {
                     Icon(Icons.Default.CalendarMonth, contentDescription = null )
-                    item.yatra?.date?.let {
+                    item.yatra?.departureDate?.let {
                         Text(text = it,
                             modifier = Modifier.weight(0.5f))
                     }
@@ -722,7 +718,7 @@ fun YatraCard4(
                 }
                 Row {
                     Icon(Icons.Default.LocationOn, contentDescription = null)
-                    Text(text = item.yatra!!.yatraLocation!!)
+                    Text(text = item.yatra!!.departurePoint!!)
                 }
                 /* Row {
                      Icon(Icons.Default.Face, contentDescription = null,

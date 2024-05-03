@@ -2,25 +2,23 @@ package com.example.tirthbus.ui.theme.Organiser.Screens
 
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.util.Log
-import android.widget.AutoCompleteTextView
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -29,14 +27,11 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Place
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DisplayMode
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,13 +43,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,43 +55,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
-import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.tirthbus.AppTopBar
-import com.example.tirthbus.Data.AlertDialogBox
 import com.example.tirthbus.Data.YatraDetailsResponse
 import com.example.tirthbus.R
 import com.example.tirthbus.ui.theme.Navigation.NavigationDestination
 import com.example.tirthbus.ui.theme.Organiser.ViewModel.AddYatraViewModel
 import com.example.tirthbus.ui.theme.Organiser.ViewModel.YatraUiState
 import com.example.tirthbus.ui.theme.Theme.TirthBusTheme
-import com.google.android.gms.common.api.Status
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.AutocompletePrediction
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.io.IOException
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -271,14 +246,17 @@ fun AddYatraForm(
     }
         Column(
             modifier = modifier,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            data.yatraName?.let {
+            data.yatraTitle?.let {
                 FormTextBox(value = it,
-                    onValueChange = { onItemValueChange(data.copy(yatraName = it)) },
+                    onValueChange = { onItemValueChange(data.copy(yatraTitle = it)) },
                     label = stringResource(
                         id = R.string.yname
-                    ))
+                    )
+                    ,modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions()
+                )
             }
 
            /*data.date?.let {
@@ -291,36 +269,42 @@ fun AddYatraForm(
 
             DatePicker2()
 
-            data.yatraTime?.let {
+            data.departureTime?.let {
                 FormTextBox(value = it,
-                    onValueChange = { onItemValueChange(data.copy(yatraTime = it)) },
+                    onValueChange = { onItemValueChange(data.copy(departureTime = it)) },
                     label = stringResource(
                         id = R.string.ytime
-                    ))
+                    ),modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions())
             }
 
-            data.yatraLocation?.let {
+            data.departurePoint?.let {
                 FormTextBox(
                     value = it,
-                    onValueChange = { onItemValueChange(data.copy(yatraLocation = it)) },
+                    onValueChange = { onItemValueChange(data.copy(departurePoint = it)) },
                     label = stringResource(id = R.string.ylocation),
-                    trailingIcon = { Icon(Icons.Filled.Place, contentDescription = null) })
+                    trailingIcon = { Icon(Icons.Filled.Place, contentDescription = null) }
+                    ,modifier = Modifier.fillMaxWidth()
+                ,keyboardOptions = KeyboardOptions())
             }
            // AutoCompletePlacesScreen(placesClient = placesClient)
 
-            data.totalAmount?.let {
-                FormTextBox(value = it,
-                    onValueChange = { onItemValueChange(data.copy(totalAmount = it)) },
-                    label = stringResource(
-                        id = R.string.totalFare
-                    ))
-            }
-
-            data.bookingAmount?.let {
-                FormTextBox(
-                    value = it,
-                    onValueChange = { onItemValueChange(data.copy(bookingAmount = it)) },
-                    label = stringResource(id = R.string.bookingAmount))
+            Row(modifier = Modifier.fillMaxWidth()) {
+                data.totalAmount?.let {
+                    FormTextBox(value = it,
+                        onValueChange = {onItemValueChange(data.copy(totalAmount = it))},
+                    label =  stringResource(id = R.string.totalFare)
+                        ,modifier = Modifier.weight(1f),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                }
+                Spacer(modifier = Modifier.width(5.dp))
+                data.bookingAmount?.let { FormTextBox(value = it, onValueChange = {onItemValueChange(data.copy(bookingAmount = it))},
+                    label =  stringResource(id = R.string.bookingAmount)
+                    ,modifier = Modifier.weight(1f),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                }
             }
 
             data.lastDateOfBooking?.let {
@@ -328,6 +312,8 @@ fun AddYatraForm(
                     onValueChange = { onItemValueChange(data.copy(lastDateOfBooking = it)) },
                     label = stringResource(id = R.string.lastDateOfBooking),
                     trailingIcon = { Icon(Icons.Filled.DateRange, contentDescription = null) }
+                    ,modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
             }
         }
@@ -360,9 +346,16 @@ fun DatePicker2(){
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         // Pre-select a date for January 4, 2020
         val state = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
-        androidx.compose.material3.DatePicker(state = state,modifier = Modifier.padding(16.dp))
+        androidx.compose.material3.DatePicker(
+            state = state,
+            showModeToggle = false,
+            title = {},
+            headline = {},
+            modifier = Modifier.padding(top = 1.dp))
     }
 }
+
+
 @Composable
 fun AddContactForm(
     data: YatraDetailsResponse.Yatra,
@@ -380,36 +373,15 @@ fun AddContactForm(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             data.organiserName?.let {
-                FormTextBox(value = data.organiserName?:"",
+                FormTextBox2(value = data.organiserName?:"",
                     onValueChange = { onItemValueChange(data.copy(organiserName = it)) },
                     label = stringResource(
                         id = R.string.Organiser
                     ))
             }
-
-
-            data.contactName1?.let {
-                FormTextBox2(
-                    value = data.contactName1?:"",
-                    onValueChange = { onItemValueChange(data.copy(contactName1 = it)) },
-                    label = "Contact Person",
-                    modifier = Modifier.weight(0.5f),
-                    trailingIcon = { Icon(Icons.Default.Person, contentDescription = null) })
-            }
-
-                data.contactPhn1?.let {
-                    FormTextBox2(
-                        value = it,
-                        onValueChange = { onItemValueChange(data.copy(contactPhn1 = it)) },
-                        label = "Contact Phone",
-                        modifier = Modifier.weight(0.5f),
-                        trailingIcon = { Icon(Icons.Default.Phone, contentDescription = null) }
-                    )
-                }
             }
         }
     }
-
     /*Button(
         onClick = onSelectImageClick,
         shape = MaterialTheme.shapes.small,
@@ -431,9 +403,11 @@ fun AddContactForm(
 fun FormTextBox(value:String,
                 onValueChange:(String) -> Unit,
                 label:String,
-                trailingIcon: @Composable (() -> Unit)? = null){
+                trailingIcon: @Composable (() -> Unit)? = null,
+                modifier: Modifier = Modifier,
+                keyboardOptions: KeyboardOptions){
 
-    TextField(value = value,
+    OutlinedTextField(value = value,
         onValueChange = onValueChange,
         label = { Text1(text = label)},
         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -441,10 +415,11 @@ fun FormTextBox(value:String,
             unfocusedBorderColor = MaterialTheme.colorScheme.secondaryContainer,
             disabledBorderColor = MaterialTheme.colorScheme.secondaryContainer
         ),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         singleLine = true,
         trailingIcon = trailingIcon,
-        shape = ShapeDefaults.Large
+        shape = ShapeDefaults.Large,
+        keyboardOptions = keyboardOptions
     )
 }
 
@@ -568,7 +543,26 @@ fun DatePicker(){
         }
         DateRangePicker(state = state, modifier = Modifier.weight(1f))
     }
+}
 
+@Composable
+fun TwoTextFieldsInRow() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text(
+            text = "First Text",
+            modifier = Modifier
+                .weight(1f)
+                .padding(8.dp)
+        )
+        Text(
+            text = "Second Text",
+            modifier = Modifier
+                .weight(1f)
+                .padding(8.dp)
+        )
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -580,6 +574,6 @@ fun AddYatraPreview(){
             data = YatraDetailsResponse.Yatra(organiserName = "Nitin Kumar"),
             onItemValueChange = {}
         )*/
-        DatePicker2()
+        TwoTextFieldsInRow()
     }
 }

@@ -50,7 +50,7 @@ class YatraRepoImpl @Inject constructor(private val db : FirebaseFirestore,
                     Log.e("YatraRepoImpl", "Exception in addYatra: ${exception.message}")
                     trySend(ResultState.Failure(exception))
                 }
-            Log.d("Yatra", "YatraName: ${yatra.yatraName}, YatraDate: ${yatra.date}")
+            Log.d("Yatra", "YatraName: ${yatra.yatraTitle}, YatraDate: ${yatra.departureDate}")
             awaitClose {
                 close()
             }
@@ -109,7 +109,7 @@ class YatraRepoImpl @Inject constructor(private val db : FirebaseFirestore,
                     Log.e("YatraRepoImpl", "Exception in addYatra: ${exception.message}")
                     trySend(ResultState.Failure(exception))
                 }
-            Log.d("Yatra", "YatraName: ${yatra.yatraName}, YatraDate: ${yatra.date}")
+            Log.d("Yatra", "YatraName: ${yatra.yatraTitle}, YatraDate: ${yatra.departureDate}")
             awaitClose{
                 close()
             }
@@ -132,10 +132,10 @@ class YatraRepoImpl @Inject constructor(private val db : FirebaseFirestore,
                         querySnapshot -> val yatraList = querySnapshot.documents.map { document -> val data = document.data
                     YatraDetailsResponse(
                         yatra = YatraDetailsResponse.Yatra(
-                            yatraName = data?.get("yatraName") as String?,
-                            date = data?.get("yatraDate") as String?,
-                            yatraTime = data?.get("yatraTime") as String?,
-                            yatraLocation =  data?.get("yatraLocation") as String?,
+                            yatraTitle = data?.get("yatraName") as String?,
+                            departureDate = data?.get("yatraDate") as String?,
+                            departureTime = data?.get("departureTime") as String?,
+                            departurePoint =  data?.get("departurePoint") as String?,
                             userId = data?.get("userId") as String?,
                         ),
                         key = document.id
@@ -163,10 +163,10 @@ class YatraRepoImpl @Inject constructor(private val db : FirebaseFirestore,
             .addOnSuccessListener { val yatrasList = it.map {
                     data -> YatraDetailsResponse(
                 yatra = YatraDetailsResponse.Yatra(
-                    yatraName =data["yatraName"] as String?,
-                    date = data["yatraDate"] as String?,
-                    yatraTime = data["yatraTime"] as String?,
-                    yatraLocation = data["yatraLocation"] as String?
+                    yatraTitle =data["yatraName"] as String?,
+                    departureDate = data["yatraDate"] as String?,
+                    departureTime = data["departureTime"] as String?,
+                    departurePoint = data["departurePoint"] as String?
                 ),
                 key = data.id
             )
@@ -214,27 +214,23 @@ class YatraRepoImpl @Inject constructor(private val db : FirebaseFirestore,
                     val yatraDetails = YatraDetailsResponse(
                         yatra = YatraDetailsResponse.Yatra(
                             //Basic details
-                            yatraName = data?.get("yatraName") as String?,
-                           // arrivalDate = data?.get("arrivalDate") as String?,
-                            date = data?.get("date") as String?,
-                            yatraTime = data?.get("yatraTime") as String?,
-                            yatraLocation = data?.get("yatraLocation") as String?,
+                            yatraTitle = data?.get("yatraTitle") as String?,
+                            departureDate = data?.get("date") as String?,
+                            departureTime = data?.get("departureTime") as String?,
+                            arrivalDate = data?.get("arrivalDate") as String?,
+                            arrivalTime = data?.get("arrivalTime") as String?,
+                            departurePoint = data?.get("departurePoint") as String?,
                             imageUrl = data?.get("imageUrl") as String?,
-                            info = data?.get("info") as
+                            yatraDescription = data?.get("yatraDescription") as
                             String?,
                             //Bus Detail
-                            busType = data?.get("busType") as String?,
+                            busFacilities = data?.get("busFacilities") as? List<String?> ?: emptyList(),
                             totalAmount = data?.get("totalAmount") as String?,
                             bookingAmount = data?.get("bookingAmount") as String?,
                             numberOfSeats = data?.get("numberOfSeats") as String?,
                             lastDateOfBooking = data?.get("lastDateOfBooking") as String?,
                             //Contact Details
                             organiserName = data?.get("organiserName") as String?,
-                            contactName1 = data?.get("contactName1") as String?,
-                            contactName2 = data?.get("contactName2") as String?,
-                            contactPhn1 = data?.get("contactPhn1") as String?,
-                            contactPhn2 = data?.get("contactPhn2") as String?,
-                            paymentMethod = data?.get("paymentMethod") as String?,
                             //Includes/Rules
                             includesList = data?.get("includesList") as? List<String?> ?: emptyList(),
                             rulesList = data?.get("rulesList") as? List<String?> ?: emptyList(),
@@ -365,11 +361,11 @@ class YatraRepoImpl @Inject constructor(private val db : FirebaseFirestore,
         trySend(ResultState.Loading)
 
         val map = HashMap<String,Any>()
-        map["yatraName"] = yatra.yatra?.yatraName!!
-        map["departureDate"] = yatra.yatra!!.date!!
+        map["yatraName"] = yatra.yatra?.yatraTitle!!
+        map["departureDate"] = yatra.yatra!!.departureDate!!
         //map["arrivalDate"] = yatra.yatra!!.arrivalDate!!
-        map["yatraTime"] = yatra.yatra!!.yatraTime!!
-        map["yatraLocation"] = yatra.yatra!!.yatraLocation!!
+        map["departureTime"] = yatra.yatra!!.departureTime!!
+        map["departurePoint"] = yatra.yatra!!.departurePoint!!
 
         db.collection("yatras")
             .document(yatra.key!!)
@@ -418,7 +414,7 @@ class YatraPagingSource @Inject constructor(private val db: FirebaseFirestore,
     override suspend fun load(params: LoadParams<DocumentSnapshot>): LoadResult<DocumentSnapshot, YatraDetailsResponse> {
         return try {
             val currentPageSnapshot = params.key ?: db.collection("yatras")
-                .orderBy("yatraName", Query.Direction.DESCENDING)
+                .orderBy("yatraTitle", Query.Direction.DESCENDING)
                 .limit(PAGE_SIZE.toLong())
                 .get()
                 .await()
@@ -426,19 +422,19 @@ class YatraPagingSource @Inject constructor(private val db: FirebaseFirestore,
             val currentPage = currentPageSnapshot as QuerySnapshot
 
             val filteredYatras = currentPage.documents.filter { document ->
-                val yatraName = document.getString("yatraName") ?: ""
+                val yatraName = document.getString("yatraTitle") ?: ""
                 yatraName.contains(searchQuery, ignoreCase = true)
             }
 
             val yatras = filteredYatras.map{
                     document -> YatraDetailsResponse(
                 yatra = YatraDetailsResponse.Yatra(
-                    yatraName = document.getString("yatraName"),
-                    date = document.getString("date"),
+                    yatraTitle = document.getString("yatraTitle"),
+                    departureDate = document.getString("departureDate"),
                     totalAmount = document.getString("totalAmount"),
                     organiserName = document.getString("organiserName"),
-                    yatraTime = document.getString("yatraTime"),
-                    yatraLocation = document.getString("yatraLocation"),
+                    departureTime = document.getString("departureTime"),
+                    departurePoint = document.getString("departurePoint"),
                     userId = document.getString("userId"),
                     imageUrl = document.getString("imageUrl")
                 ),
