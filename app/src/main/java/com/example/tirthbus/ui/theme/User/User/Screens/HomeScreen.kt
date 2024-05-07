@@ -861,6 +861,9 @@ fun ImageSlider(images: List<String>){
 @Composable
 fun HomePreview(){
     TirthBusTheme {
-        ImageSlider(images = bannerList)
+        YatraCard3(item = YatraDetailsResponse(YatraDetailsResponse.Yatra("Title","date"))) {
+
+
+        }
     }
 }

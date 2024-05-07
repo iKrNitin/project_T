@@ -3,9 +3,11 @@
     <string name="Menu">Menu\n</string>
     <string name="Back">Back</string>
     <string name="Organiser">अयोजक- </string>
-    <string name="Date">दिनांक</string>
+    <string name="DepartureDate">प्रस्थान दिनांक</string>
+    <string name="ArrivalDate">आगमन दिनांक</string>
     <string name="help">सहायता</string>
     <string name="about">हमारे बारे में</string>
+    <string name="YatraDescription">Yatra Description</string>
     <string name="user">User</string>
     <string name="HomeScreen">Home Screen\n</string>
     <string name="add_yatra">Add Yatra</string>

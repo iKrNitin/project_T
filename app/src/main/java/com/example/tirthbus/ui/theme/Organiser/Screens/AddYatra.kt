@@ -7,6 +7,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,8 +27,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -259,23 +260,52 @@ fun AddYatraForm(
                 )
             }
 
-           /*data.date?.let {
+            Row(modifier = Modifier.fillMaxWidth()){
+            data.departureDate?.let {
                 FormTextBox(
                     value = it,
-                    onValueChange = { onItemValueChange(data.copy(date = it)) },
-                    label = stringResource(id = R.string.Date),
-                    trailingIcon = { Icon(Icons.Filled.DateRange, contentDescription = null) })
-            }*/
-
-            DatePicker2()
+                    onValueChange = { onItemValueChange(data.copy(departureDate = it)) },
+                    label = stringResource(id = R.string.DepartureDate),
+                    trailingIcon = { Icon(Icons.Filled.DateRange, contentDescription = null) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    modifier = Modifier.weight(1.5f)
+                )
+            }
+                Spacer(modifier = Modifier.width(5.dp))
 
             data.departureTime?.let {
                 FormTextBox(value = it,
                     onValueChange = { onItemValueChange(data.copy(departureTime = it)) },
                     label = stringResource(
                         id = R.string.ytime
-                    ),modifier = Modifier.fillMaxWidth(),
-                            keyboardOptions = KeyboardOptions())
+                    ),modifier = Modifier.weight(1f),
+                            keyboardOptions = KeyboardOptions(),
+                    )
+            }
+            }
+
+            Row(modifier = Modifier.fillMaxWidth()){
+                data.arrivalDate?.let {
+                    FormTextBox(
+                        value = it,
+                        onValueChange = { onItemValueChange(data.copy(arrivalDate = it)) },
+                        label = stringResource(id = R.string.ArrivalDate),
+                        trailingIcon = { Icon(Icons.Filled.DateRange, contentDescription = null) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                        modifier = Modifier.weight(1.5f)
+                    )
+                }
+                Spacer(modifier = Modifier.width(5.dp))
+
+                data.arrivalTime?.let {
+                    FormTextBox(value = it,
+                        onValueChange = { onItemValueChange(data.copy(arrivalTime = it)) },
+                        label = stringResource(
+                            id = R.string.ytime
+                        ),modifier = Modifier.weight(1f),
+                        keyboardOptions = KeyboardOptions(),
+                    )
+                }
             }
 
             data.departurePoint?.let {
@@ -313,25 +343,44 @@ fun AddYatraForm(
                     label = stringResource(id = R.string.lastDateOfBooking),
                     trailingIcon = { Icon(Icons.Filled.DateRange, contentDescription = null) }
                     ,modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    keyboardOptions = KeyboardOptions()
+                )
+            }
+
+            data.yatraDescription?.let {
+                FormTextBox(value = it,
+                    onValueChange = { onItemValueChange(data.copy(yatraDescription = it)) },
+                    label = stringResource(id = R.string.YatraDescription),
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                )
+            }
+
+            data.organiserName?.let {
+                FormTextBox(value = it,
+                    onValueChange = { onItemValueChange(data.copy(organiserName = it)) },
+                    label = stringResource(id = R.string.Organiser),
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
                 )
             }
         }
 
-   /* Button(
+    /*Button(
         onClick = onSelectImageClick,
         shape = MaterialTheme.shapes.small,
         modifier = Modifier.fillMaxWidth()) {
         Text1(text = stringResource(id = R.string.select_single_img))
-    }
+    }*/
 
-    AsyncImage(model = uri, contentDescription = null,modifier = Modifier
-        .size(200.dp)
+    AsyncImage(model = uri, contentDescription = "Add Image",modifier = Modifier
+        .size(150.dp)
+        .clickable { onSelectImageClick() }
         .border(
             width = 2.dp,
             color = MaterialTheme.colorScheme.primaryContainer,
             shape = ShapeDefaults.Large
-        ))*/
+        ))
 
     if (enabled) {
         Text1(text = stringResource(id = R.string.reqrd),
