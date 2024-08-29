@@ -133,7 +133,7 @@ class YatraRepoImpl @Inject constructor(private val db : FirebaseFirestore,
                     YatraDetailsResponse(
                         yatra = YatraDetailsResponse.Yatra(
                             yatraTitle = data?.get("yatraName") as String?,
-                            departureDate = data?.get("yatraDate") as String?,
+                            departureDate = data?.get("date") as String?,
                             departureTime = data?.get("departureTime") as String?,
                             departurePoint =  data?.get("departurePoint") as String?,
                             userId = data?.get("userId") as String?,
@@ -164,7 +164,7 @@ class YatraRepoImpl @Inject constructor(private val db : FirebaseFirestore,
                     data -> YatraDetailsResponse(
                 yatra = YatraDetailsResponse.Yatra(
                     yatraTitle =data["yatraName"] as String?,
-                    departureDate = data["yatraDate"] as String?,
+                    departureDate = data["date"] as String?,
                     departureTime = data["departureTime"] as String?,
                     departurePoint = data["departurePoint"] as String?
                 ),
@@ -414,7 +414,7 @@ class YatraPagingSource @Inject constructor(private val db: FirebaseFirestore,
     override suspend fun load(params: LoadParams<DocumentSnapshot>): LoadResult<DocumentSnapshot, YatraDetailsResponse> {
         return try {
             val currentPageSnapshot = params.key ?: db.collection("yatras")
-                .orderBy("yatraTitle", Query.Direction.DESCENDING)
+                .orderBy("yatraName", Query.Direction.DESCENDING)
                 .limit(PAGE_SIZE.toLong())
                 .get()
                 .await()
@@ -429,8 +429,8 @@ class YatraPagingSource @Inject constructor(private val db: FirebaseFirestore,
             val yatras = filteredYatras.map{
                     document -> YatraDetailsResponse(
                 yatra = YatraDetailsResponse.Yatra(
-                    yatraTitle = document.getString("yatraTitle"),
-                    departureDate = document.getString("departureDate"),
+                    yatraTitle = document.getString("yatraName"),
+                    departureDate = document.getString("date"),
                     totalAmount = document.getString("totalAmount"),
                     organiserName = document.getString("organiserName"),
                     departureTime = document.getString("departureTime"),

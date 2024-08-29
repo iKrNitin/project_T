@@ -19,6 +19,7 @@ data class YatraDetailsResponse(
         val departurePoint:String? = "",
         val imageUrl: String? = "",
         val yatraDescription: String? = "",
+        val imageList:List<String?> = emptyList(),
         // Bus Details
         val busFacilities:List<String?> = emptyList(),
         val numberOfSeats: String? = "",

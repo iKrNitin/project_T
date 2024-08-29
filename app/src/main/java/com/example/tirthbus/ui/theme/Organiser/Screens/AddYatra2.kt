@@ -49,7 +49,8 @@ fun AddYatraScreen2(
     navigateBack: () -> Unit,
     navigateToAddYatra3:(YatraUiState)->Unit,
     viewModel: AddYatraViewModel = hiltViewModel(),
-    yatraUiState: YatraUiState // Receive the UI state as a parameter
+    yatraUiState: YatraUiState,// Receive the UI state as a parameter
+    uri: Uri?
 ){
     val appBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val coroutineScope = rememberCoroutineScope()
@@ -58,14 +59,15 @@ fun AddYatraScreen2(
         mutableStateOf(yatraUiState)
     }
 
-    var uri by remember {
+    /*var uri by remember {
         mutableStateOf<Uri?>(null)
-    }
+    }*/
     val context = LocalContext.current
 
     LaunchedEffect(yatraUiState){
         uiState = yatraUiState
         Log.d("Add yatra","receving $yatraUiState from 1st screen")
+        Log.d("Add yatra","receving $uri from 1st screen")
     }
 
     Scaffold(
@@ -102,15 +104,20 @@ fun AddYatraScreen2(
                         yatraDetails = uiState.yatraDetails.copy(busFacilities = selectedList)
                     ) },
                 onNextClick = {
-                    /*navigateToAddYatra3(uiState)
-                              Log.d("Yatra","here final ui state is $uiState")*/
-                    coroutineScope.launch {
-                        viewModel.uploadImageAndAddYatra(
-                            uiState.yatraDetails,
-                            uri?: return@launch,
-                            context,
-                            "image"
-                        )
+                    /*navigateToAddYatra3(uiState)*/
+                    Log.d("Yatra", "here final ui state is ${uiState.yatraDetails}")
+                    Log.d("Yatra", "uri: $uri")
+                    if (uri != null) {
+                        coroutineScope.launch {
+                            viewModel.uploadImageAndAddYatra(
+                                uiState.yatraDetails,
+                                uri,
+                                context,
+                                "image"
+                            )
+                        }
+                    } else {
+                        Log.e("Yatra", "No image selected")
                     }
                      })
         }

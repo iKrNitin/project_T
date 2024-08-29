@@ -128,11 +128,9 @@ const val OTP_VIEW_TYPE_BORDER = 2
 
 @Composable
 fun CommonDialog() {
-
     Dialog(onDismissRequest = { }) {
         Text(text = "Loading..")
     }
-
 }
 
 

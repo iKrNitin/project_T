@@ -120,10 +120,9 @@ fun YatraDetailScreen(
                 onCallClick = {})
         }
 
-        is ResultState.Failure -> {
-            // Show error message
-            Text(text = "Failed to fetch Yatra details")
-        }
+
+        else -> {
+            Text(text = "Failed to fetch yatra detail")}
     }
     }
 

@@ -600,7 +600,7 @@ fun YatraCard3(
     item: YatraDetailsResponse,
     modifier: Modifier = Modifier,
     onCardClick: () -> Unit
-){
+) {
     Card(
         modifier = modifier
             .aspectRatio(2.9f)
@@ -609,65 +609,67 @@ fun YatraCard3(
             .padding(5.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ){
+    ) {
         Row {
-            AsyncImage(model = item.yatra?.imageUrl,
+            // Use a placeholder or default image if imageUrl is null
+            AsyncImage(
+                model = item.yatra?.imageUrl ?: "default_image_url",
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .fillMaxWidth(0.3f))
+                    .fillMaxWidth(0.3f)
+            )
 
             FlowColumn(modifier = Modifier.padding(5.dp)) {
                 item.yatra?.yatraTitle?.let {
-                    Text(text = it,
+                    Text(
+                        text = it,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,)
+                        fontWeight = FontWeight.Bold,
+                    )
                 }
-                Row() {
-                    Icon(Icons.Default.CalendarMonth, contentDescription = null )
+
+                Row {
+                    Icon(Icons.Default.CalendarMonth, contentDescription = null)
                     item.yatra?.departureDate?.let {
-                        Text(text = it,
+                        Text(
+                            text = it,
                             style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(0.5f))
+                            modifier = Modifier.weight(0.5f)
+                        )
                     }
+
                     Icon(Icons.Default.CurrencyRupee, contentDescription = null)
                     item.yatra?.totalAmount?.let {
-                        Text(text = it,
+                        Text(
+                            text = it,
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold,)
+                            fontWeight = FontWeight.Bold,
+                        )
                     }
                 }
+
                 Row {
-                    /*Text(text = stringResource(id = R.string.Organiser))
-                    Spacer(modifier = Modifier.width(1.dp))
-                    item.yatra?.organiserName?.let { Text(text = it) }*/
+                    Icon(Icons.Default.LocationOn, contentDescription = null)
+                    Text(
+                        text = item.yatra?.departurePoint ?: "Unknown",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
-                Row {
-                Icon(Icons.Default.LocationOn, contentDescription = null)
-                Text(text = item.yatra!!.departurePoint!!,
-                    style = MaterialTheme.typography.bodyMedium)
-                }
+
                 Row {
                     Icon(Icons.Default.Person, contentDescription = null)
-                    Text(text = item.yatra!!.organiserName!!,
+                    Text(
+                        text = item.yatra?.organiserName ?: "Unknown",
                         style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold)
+                        fontWeight = FontWeight.Bold
+                    )
                 }
-               /* Row {
-                    Icon(Icons.Default.Face, contentDescription = null,
-                        modifier = Modifier.size(15.dp))
-                    Text(text = "100 Peoples viewing this yatra",
-                        style = MaterialTheme.typography.bodySmall)
-                }*/
             }
         }
-
-        /*Row(modifier = Modifier.padding(bottom = 5.dp, start = 5.dp)) {
-            Icon(Icons.Default.LocationOn, contentDescription = null)
-            item.yatra?.yatraLocation?.let { Text(text = it) }
-        }*/
     }
 }
+
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -699,7 +701,7 @@ fun YatraCard4(
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,)
                 }
-                Row() {
+                /*Row() {
                     Icon(Icons.Default.CalendarMonth, contentDescription = null )
                     item.yatra?.departureDate?.let {
                         Text(text = it,
@@ -720,7 +722,7 @@ fun YatraCard4(
                     Icon(Icons.Default.LocationOn, contentDescription = null)
                     Text(text = item.yatra!!.departurePoint!!)
                 }
-                /* Row {
+                 Row {
                      Icon(Icons.Default.Face, contentDescription = null,
                          modifier = Modifier.size(15.dp))
                      Text(text = "100 Peoples viewing this yatra",

@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +22,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -56,6 +60,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -65,6 +70,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.compose.rememberImagePainter
 import com.example.tirthbus.AppTopBar
 import com.example.tirthbus.Data.YatraDetailsResponse
 import com.example.tirthbus.R
@@ -97,13 +103,24 @@ fun AddYatraScreen1(
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
     navigateToOraganiser:()->Unit,
-    navigateToAddYatra2:(YatraUiState)->Unit,
+    navigateToAddYatra2:(YatraUiState,Uri?)->Unit,
     viewModel: AddYatraViewModel = hiltViewModel()
 ) {
     Log.d("Main", "add yatra screen is here")
     val appScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val coroutineScope = rememberCoroutineScope()
+
+    var imageUris by remember {
+        mutableStateOf<List<Uri>>(emptyList())
+    }
+
+    val multiplePhotoPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetMultipleContents(),
+        onResult = { uris ->
+            imageUris = if (uris.size > 5) uris.take(5) else uris
+        }
+    )
 
     var uri by remember {
         mutableStateOf<Uri?>(null)
@@ -143,7 +160,9 @@ fun AddYatraScreen1(
                 onSelectImageClick = {
                     singlePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 },
+                //onSelectImageClick = {multiplePhotoPicker.launch("image/*")},
                 uri = uri,
+                imageUris = imageUris,
                 modifier = Modifier
                     .fillMaxWidth(),
                 includeslist = viewModel.IncludesList,
@@ -155,7 +174,7 @@ fun AddYatraScreen1(
                 onNextClick = {
                     Log.d("Add Yatra","CLICKING ON On next")
                     Log.d("Add Yatra","sending ui state ${viewModel.yatraUiState} to next screen")
-                    navigateToAddYatra2(viewModel.yatraUiState)
+                    navigateToAddYatra2(viewModel.yatraUiState,uri)
                     /*coroutineScope.launch {
                         viewModel.uploadImageAndAddYatra(
                             viewModel.yatraUiState.yatraDetails,
@@ -192,6 +211,7 @@ fun AddYatraLayout(
     rulestempList:List<String?>,
     onIncludesSelected: (List<String?>, List<String?>) -> Unit,
     onRuleSelected: (List<String?>, List<String?>) -> Unit,
+    imageUris: List<Uri>,
 ){
     Column(
         modifier = Modifier.padding(10.dp),
@@ -203,6 +223,23 @@ fun AddYatraLayout(
             uri = uri,
             placesClient = placesClient,
             modifier = Modifier.fillMaxWidth())
+
+        Button(onClick = onSelectImageClick) {
+            Text(text = "Select Images")
+        }
+
+        LazyRow {
+            items(imageUris) { uri ->
+                Image(
+                    painter = rememberImagePainter(uri),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .padding(4.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                )
+            }
+        }
 
         //AddList2(rulesList,includeslist, includestempList ,rulestempList, onIncludesSelected,onRuleSelected )
 

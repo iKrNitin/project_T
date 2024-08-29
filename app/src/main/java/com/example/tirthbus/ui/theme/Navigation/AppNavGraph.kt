@@ -1,5 +1,6 @@
 package com.example.tirthbus.ui.theme.Navigation
 
+import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
@@ -89,7 +90,7 @@ fun AppNavHost(
                 navigateToOrganiserSignUp = {navController.navigate(OrganiserSignUpDestination.route)})
         }
 
-        composable(route = AddYatraDestination.route){
+        /*composable(route = AddYatraDestination.route){
             AddYatraScreen1(
                 navigateBack = {navController.navigateUp()},
                 navigateToOraganiser = {navController.navigate(OrganiserHomeScreenDestination.route)},
@@ -98,9 +99,23 @@ fun AppNavHost(
                     val route = "${AddYatra2Destination.route}/$yatraUiStateJson"
                     navController.navigate(route)}
             )
+        }*/
+
+        composable(route = AddYatraDestination.route) {
+            AddYatraScreen1(
+                navigateBack = { navController.navigateUp() },
+                navigateToOraganiser = { navController.navigate(OrganiserHomeScreenDestination.route) },
+                navigateToAddYatra2 = { yatraUiState, uri ->
+                    val yatraUiStateJson = Uri.encode(Gson().toJson(yatraUiState))
+                    val uriString = Uri.encode(uri.toString())
+                    val route = "${AddYatra2Destination.route}/$yatraUiStateJson/$uriString"
+                    navController.navigate(route)
+                }
+            )
         }
-        
-        composable(route = AddYatra2Destination.route + "/{yatraUiState}"){
+
+
+        /*composable(route = AddYatra2Destination.route + "/{yatraUiState}"){
             val yatraUiStateJson = it.arguments?.getString("yatraUiState")
             val yatraUiState = Gson().fromJson(yatraUiStateJson,YatraUiState::class.java)
             AddYatraScreen2(
@@ -111,7 +126,32 @@ fun AppNavHost(
                     navController.navigate(route)},
                 yatraUiState = yatraUiState
             )
+        }*/
+
+        composable(
+            route = AddYatra2Destination.route + "/{yatraUiState}/{uri}",
+            arguments = listOf(
+                navArgument("yatraUiState") { type = NavType.StringType },
+                navArgument("uri") { type = NavType.StringType }
+            )
+        ) {
+            val yatraUiStateJson = it.arguments?.getString("yatraUiState")
+            val yatraUiState = Gson().fromJson(Uri.decode(yatraUiStateJson), YatraUiState::class.java)
+            val uriString = it.arguments?.getString("uri")
+            val uri = Uri.parse(Uri.decode(uriString))
+
+            AddYatraScreen2(
+                navigateBack = { navController.navigateUp() },
+                navigateToAddYatra3 = { yatraUiState ->
+                    val yatraUiStateJson = Gson().toJson(yatraUiState)
+                    val route = "${AddYatra3Destination.route}/$yatraUiStateJson"
+                    navController.navigate(route)
+                },
+                yatraUiState = yatraUiState,
+                uri = uri // Pass URI to AddYatraScreen2
+            )
         }
+
 
         composable(route = AddYatra3Destination.route + "/{yatraUiState2}"){
             val yatraUiStateJson = it.arguments?.getString("yatraUiState2")
@@ -122,12 +162,6 @@ fun AppNavHost(
                 navigateToOraganiser = {navController.navigate(UserHomeScreenDestination.route)}
             )
         }
-
-        /*composable(route = AddYatraDestination2.route){
-            AddYatraScreen2(
-                navigateBack = { navController.navigateUp() }
-            )
-        }*/
 
        /* composable(route = "${YatraDetailsDestination.route}/{$yatraIdArg}",
             arguments = listOf(navArgument(yatraIdArg){type = NavType.StringType})
