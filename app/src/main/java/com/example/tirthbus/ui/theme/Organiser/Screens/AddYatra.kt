@@ -1,8 +1,10 @@
 package com.example.tirthbus.ui.theme.Organiser.Screens
 
+
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,8 +37,10 @@ import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DisplayMode
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -85,6 +89,8 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
 import androidx.compose.material3.Text as Text1
 
 //GoogleMapsApiKey- AIzaSyBw73OMOGz5xtZi-p6Ylr2NMNHZex9zHbc
@@ -217,12 +223,16 @@ fun AddYatraLayout(
         modifier = Modifier.padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        AddYatraForm(data = yatraUiState.yatraDetails,
+        /*AddYatraForm(data = yatraUiState.yatraDetails,
             onItemValueChange = onYatraValueChange,
             onSelectImageClick = onSelectImageClick,
             uri = uri,
             placesClient = placesClient,
-            modifier = Modifier.fillMaxWidth())
+            modifier = Modifier.fillMaxWidth())*/
+
+        AddYatraForm2(data = yatraUiState.yatraDetails ,
+            onItemValueChange = onYatraValueChange ,
+            onSelectImageClick = { /*TODO*/ })
 
         Button(onClick = onSelectImageClick) {
             Text(text = "Select Images")
@@ -424,6 +434,115 @@ fun AddYatraForm(
             modifier = Modifier.padding(start = 16.dp))
     }
 }
+
+@Composable
+fun AddYatraForm2(
+    data: YatraDetailsResponse.Yatra,
+    modifier: Modifier = Modifier,
+    onItemValueChange: (YatraDetailsResponse.Yatra) -> Unit,
+    onSelectImageClick: () -> Unit,
+) {
+    // Date picker state
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    var selectedDate by remember { mutableStateOf(data.departureDate ?: "") }
+
+    // Date picker dialog
+    val datePickerDialog = android.app.DatePickerDialog(
+        context,
+        { _, selectedYear, selectedMonth, selectedDay ->
+            val cal = Calendar.getInstance().apply {
+                set(selectedYear, selectedMonth, selectedDay)
+            }
+            val dayOfWeek =
+                cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault())
+            selectedDate = "${selectedDay}/${selectedMonth + 1}/${selectedYear} ($dayOfWeek)"
+            onItemValueChange(data.copy(departureDate = selectedDate))
+        },
+        year, month, day
+    )
+
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+        elevation = CardDefaults.cardElevation(5.dp),
+        modifier = modifier.padding(10.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(15.dp)
+        ) {
+            // Date picker field
+            OutlinedTextField(
+                value = selectedDate,
+                onValueChange = {},
+                label = { Text(text = stringResource(id = R.string.DepartureDate)) },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.DateRange,
+                        contentDescription = "Select Date",
+                        modifier = Modifier.clickable {
+                            datePickerDialog.show()
+                        }
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { datePickerDialog.show() },
+                readOnly = true
+            )
+
+            // Other fields...
+
+            // Checkbox for Terms and Conditions
+            var isChecked by remember { mutableStateOf(false) }
+
+            Button(
+                onClick = {
+                    if (isChecked) {
+                        onSelectImageClick()
+                    } else {
+                        Toast.makeText(context, "Please accept terms and conditions", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = stringResource(id = R.string.save))
+            }
+
+            // Image display and selection
+        }
+    }
+}
+
+
+@Composable
+fun FormTextBoxWithDivider(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    trailingIcon: @Composable (() -> Unit)? = null
+) {
+    Column {
+        FormTextBox(
+            value = value,
+            onValueChange = onValueChange,
+            label = label,
+            modifier = modifier,
+            trailingIcon = trailingIcon,
+            keyboardOptions = KeyboardOptions()
+        )
+        Divider()
+    }
+}
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -660,6 +779,10 @@ fun AddYatraPreview(){
             data = YatraDetailsResponse.Yatra(organiserName = "Nitin Kumar"),
             onItemValueChange = {}
         )*/
-        TwoTextFieldsInRow()
+        AddYatraForm2(
+            data = YatraDetailsResponse.Yatra(),
+            onItemValueChange = {},
+            onSelectImageClick = { /*TODO*/ },
+        )
     }
 }
