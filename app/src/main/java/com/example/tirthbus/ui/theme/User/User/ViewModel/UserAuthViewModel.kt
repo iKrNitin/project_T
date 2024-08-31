@@ -1,5 +1,6 @@
 package com.example.tirthbus.ui.theme.User.User.ViewModel
 
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.util.Log
@@ -37,22 +38,27 @@ class UserAuthViewModel @Inject constructor(private val repo: AuthRepo) : ViewMo
     }
 
     //fun createUser(authUser:UserDetail.User) = repo.createUser(authUser)
-    fun createUser(authUser:UserDetailResponse.User) {
+    fun createUser(authUser: UserDetailResponse.User, activity: Activity) {
         viewModelScope.launch {
-            repo.createUser(authUser).collect{
-                    result ->
-                when (result) {
-                    is ResultState.Loading -> Log.d("AddYatraViewModel", "Adding Yatra details...")
-                    is ResultState.Success -> {
-                        Log.d("AddYatraViewModel", "Yatra added successfully: ${result.data}")
-                        addUser(authUser)
+            authUser.userPhnNumber?.let {
+                authUser.userEmail?.let { it1 ->
+                    repo.createUserWithPhone(it1, activity).collect { result ->
+                        when (result) {
+                            is ResultState.Loading -> Log.d("Auth", "Creating new user...")
+                            is ResultState.Success -> {
+                                Log.d("Auth", "User Created Successfully: ${result.data}")
+                                addUser(authUser)
+                            }
 
+                            is ResultState.Failure -> Log.e("Auth", "Failed to create user: ${result.msg}")
+
+                        }
                     }
-                    is ResultState.Failure -> Log.e("AddYatraViewModel", "Failed to add Yatra details: ${result.msg}")
                 }
-            }
+            } ?: Log.e("Auth", "Phone number is null")
         }
     }
+
 
     fun createUser2(authUser: UserDetailResponse.User) = repo.createUser(authUser)
 

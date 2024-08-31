@@ -23,6 +23,8 @@ import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -41,6 +43,7 @@ class AuthRepoImpl @Inject constructor(
         val onVerificationCallback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {
                 TODO("Not yet implemented")
+                Log.d("Auth","User verified successfully")
             }
 
             override fun onVerificationFailed(p0: FirebaseException) {
@@ -126,6 +129,18 @@ class AuthRepoImpl @Inject constructor(
             close()
         }
     }
+
+    private fun handleAuthException(exception: Exception?) {
+        when (exception) {
+            is FirebaseAuthWeakPasswordException -> Log.d("main", "Weak password")
+            is FirebaseAuthInvalidCredentialsException -> Log.d("main", "Invalid credentials")
+            is FirebaseAuthUserCollisionException -> Log.d("main", "User collision")
+            is FirebaseAuthInvalidUserException -> Log.d("main", "Invalid user")
+            is FirebaseAuthEmailException -> Log.d("main", "Email exception")
+            else -> Log.d("main", "Unknown error occurred")
+        }
+    }
+
 
     override fun loginUser(auth: UserDetailResponse.User): Flow<ResultState<String>> = callbackFlow {
         trySend(ResultState.Loading)
@@ -250,7 +265,7 @@ class AuthRepoImpl @Inject constructor(
     }
 
     override fun createOrganiser(organiser: OrganiserDetailsResponse.Organiser): Flow<ResultState<String>> = callbackFlow {
-        Log.d("Auth","create organiser function called ")
+        Log.d("Auth","create organiser function called")
         trySend(ResultState.Loading)
 
         if (organiser.organiserEmail != null && organiser.organiserEmailPassword != null && organiser.organiserGroupName != null){
@@ -292,7 +307,7 @@ class AuthRepoImpl @Inject constructor(
     }
 
     override fun loginOrganiser(organiser: OrganiserDetailsResponse.Organiser): Flow<ResultState<String>> = callbackFlow {
-        Log.d("Auth","create organiser function called ")
+        Log.d("Auth","login organiser function called ")
         trySend(ResultState.Loading)
 
         if (organiser.organiserEmail != null && organiser.organiserEmailPassword != null){
@@ -302,6 +317,14 @@ class AuthRepoImpl @Inject constructor(
                     addOrganiser(organiser)
                     trySend(ResultState.Success("Organiser logged in Successfully"))
                     Log.d("Auth", "current organiser id: ${authDb.currentUser?.uid}")
+                    // Check if the user is an organizer
+                    /*checkOrganizerRole { isOrganizer ->
+                        if (isOrganizer) {
+                            trySend(ResultState.Success("Organizer logged in successfully"))
+                        } else {
+                            trySend(ResultState.Failure(Exception("Not an organizer account")))
+                        }
+                    }*/
                 } else {
                     Log.d("Auth", "SignIn Failed")
                     val exception = it.exception
@@ -332,6 +355,7 @@ class AuthRepoImpl @Inject constructor(
             close()
         }
     }
+
     override fun logoutOrganiser(organiser: OrganiserDetailsResponse.Organiser): Flow<ResultState<String>>  = callbackFlow {
         trySend(ResultState.Loading)
 
@@ -490,5 +514,21 @@ class AuthRepoImpl @Inject constructor(
 
     override fun checkUserLoggedIn(): Boolean {
         return authDb.currentUser != null
+    }
+
+    private suspend fun isOrganiser(userId: String): ResultState<Boolean> {
+        return try {
+            val docRef = FirebaseFirestore.getInstance().collection("organisers").document(userId)
+            val documentSnapshot = docRef.get().await()
+
+            if (documentSnapshot != null && documentSnapshot.exists()) {
+                val isOrganizer = documentSnapshot.getBoolean("isOrganiser") ?: false
+                ResultState.Success(isOrganizer)
+            } else {
+                ResultState.Failure(Exception("Organiser document not found"))
+            }
+        } catch (e: Exception) {
+            ResultState.Failure(e)
+        }
     }
 }

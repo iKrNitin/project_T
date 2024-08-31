@@ -41,4 +41,9 @@
     <string name="search_screen">Search Screen\n</string>
     <string name="add_yatra3">add yatra 3\n</string>
     <string name="tandc">terms and conditions\n</string>
+    <string name="OrganiserGroupName">Group/Sanstha Name</string>
+    <string name="OrganiserName">Oraganiser Name</string>
+    <string name="address">Contact Address</string>
+    <string name="city">City</string>
+    <string name="phnNmbr">Phone Number</string>
 </resources>

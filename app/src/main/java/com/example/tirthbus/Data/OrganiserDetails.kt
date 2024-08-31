@@ -13,5 +13,7 @@ data class OrganiserDetailsResponse(
         val organiserPhnNumber:String? = "",
         val organiserPhnNumber2:String? = "",
         val organiserAddress:String? = "",
+        val organiserCity:String? = "",
+        val isOrganiser:Boolean? = true
     )
 }

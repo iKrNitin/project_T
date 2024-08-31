@@ -1,5 +1,6 @@
 package com.example.tirthbus.ui.theme.User.User.Screens
 
+import android.app.Activity
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,7 +45,7 @@ object SignUpScreenDestination : NavigationDestination {
         get() = R.string.signUp
 }
 
-@Composable
+/*@Composable
 fun SignUpScreen(
     navigateToUserHomeScreen:()->Unit,
     navigateToSignInScreen: () -> Unit,
@@ -63,8 +65,8 @@ fun SignUpScreen(
             onValueChange = viewModel::updateUiState,
             onSignUpClicked = {scope.launch (Dispatchers.Main){
 
-               //viewModel.createUser(signUpUiState)
-                viewModel.createUser2(signUpUiState).collect{
+               viewModel.createUser(signUpUiState,this)
+                /*viewModel.createUser2(signUpUiState).collect{
                     result ->
                     when(result){
                         is ResultState.Loading -> Log.d("AddYatraViewModel", "Adding Yatra details...")
@@ -76,7 +78,7 @@ fun SignUpScreen(
                         }
                         is ResultState.Failure -> Log.e("AddYatraViewModel", "Failed to add Yatra details: ${result.msg}")
                     }
-                }
+                }*/
             }
 
               /* viewModel.createUser(
@@ -106,7 +108,44 @@ fun SignUpScreen(
             onSignInClicked = {navigateToSignInScreen()}
         )
     }
+}*/
+
+@Composable
+fun SignUpScreen(
+    navigateToUserHomeScreen: () -> Unit,
+    navigateToSignInScreen: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: UserAuthViewModel = hiltViewModel()
+) {
+    var signUpUiState = viewModel.signUpUiState
+
+    // Access the current Activity
+    val activity = LocalContext.current as? Activity
+
+    val scope = rememberCoroutineScope()
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+
+        SignUpLayout(
+            signUpDetails = signUpUiState,
+            onValueChange = viewModel::updateUiState,
+            onSignUpClicked = {
+                scope.launch(Dispatchers.Main) {
+                    // Pass the Activity to the createUser function
+                    activity?.let {
+                        viewModel.createUser(signUpUiState, it)
+                    } ?: Log.e("SignUpScreen", "Activity is null")
+                }
+            },
+            onSignInClicked = { navigateToSignInScreen() }
+        )
+    }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

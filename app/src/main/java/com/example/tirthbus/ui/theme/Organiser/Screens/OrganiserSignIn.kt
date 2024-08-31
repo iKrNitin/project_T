@@ -70,7 +70,7 @@ fun OrganiserSignInScreen(
                             Log.d("Auth", "Organiser log in successfully")
                             navigateToOrganiserHomeScreen()
                         }
-                        is ResultState.Failure -> Log.e("Auth", "Failed to add Organiser details")
+                        is ResultState.Failure -> Log.e("Auth", "Failed to login Organiser")
                     }
                 }
             }
