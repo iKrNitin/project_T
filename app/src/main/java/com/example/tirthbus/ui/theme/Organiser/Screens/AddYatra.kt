@@ -1,6 +1,5 @@
 package com.example.tirthbus.ui.theme.Organiser.Screens
 
-
 import android.net.Uri
 import android.os.Build
 import android.util.Log
@@ -24,6 +23,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -52,11 +52,13 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -85,6 +87,7 @@ import com.example.tirthbus.ui.theme.Theme.TirthBusTheme
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -223,16 +226,16 @@ fun AddYatraLayout(
         modifier = Modifier.padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        /*AddYatraForm(data = yatraUiState.yatraDetails,
+        AddYatraForm(data = yatraUiState.yatraDetails,
             onItemValueChange = onYatraValueChange,
             onSelectImageClick = onSelectImageClick,
             uri = uri,
             placesClient = placesClient,
-            modifier = Modifier.fillMaxWidth())*/
+            modifier = Modifier.fillMaxWidth())
 
-        AddYatraForm2(data = yatraUiState.yatraDetails ,
+        /*AddYatraForm2(data = yatraUiState.yatraDetails ,
             onItemValueChange = onYatraValueChange ,
-            onSelectImageClick = { /*TODO*/ })
+            onSelectImageClick = { /*TODO*/ })*/
 
         Button(onClick = onSelectImageClick) {
             Text(text = "Select Images")
@@ -308,7 +311,7 @@ fun AddYatraForm(
             }
 
             Row(modifier = Modifier.fillMaxWidth()){
-            data.departureDate?.let {
+            /*data.departureDate?.let {
                 FormTextBox(
                     value = it,
                     onValueChange = { onItemValueChange(data.copy(departureDate = it)) },
@@ -317,7 +320,13 @@ fun AddYatraForm(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     modifier = Modifier.weight(1.5f)
                 )
-            }
+            }*/
+                DateTextField2(
+                    label = stringResource(id = R.string.DepartureDate),
+                    dateValue = data.departureDate,
+                    onDateSelected = { newDate -> onItemValueChange(data.copy(departureDate = newDate)) }
+                )
+
                 Spacer(modifier = Modifier.width(5.dp))
 
             data.departureTime?.let {
@@ -332,16 +341,12 @@ fun AddYatraForm(
             }
 
             Row(modifier = Modifier.fillMaxWidth()){
-                data.arrivalDate?.let {
-                    FormTextBox(
-                        value = it,
-                        onValueChange = { onItemValueChange(data.copy(arrivalDate = it)) },
-                        label = stringResource(id = R.string.ArrivalDate),
-                        trailingIcon = { Icon(Icons.Filled.DateRange, contentDescription = null) },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                        modifier = Modifier.weight(1.5f)
-                    )
-                }
+                DateTextField2(
+                    label = stringResource(id = R.string.DepartureDate),
+                    dateValue = data.arrivalDate,
+                    onDateSelected = { newDate -> onItemValueChange(data.copy(arrivalDate = newDate)) }
+                )
+
                 Spacer(modifier = Modifier.width(5.dp))
 
                 data.arrivalTime?.let {
@@ -384,15 +389,11 @@ fun AddYatraForm(
                 }
             }
 
-            data.lastDateOfBooking?.let {
-                FormTextBox(value = it,
-                    onValueChange = { onItemValueChange(data.copy(lastDateOfBooking = it)) },
-                    label = stringResource(id = R.string.lastDateOfBooking),
-                    trailingIcon = { Icon(Icons.Filled.DateRange, contentDescription = null) }
-                    ,modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions()
-                )
-            }
+            DateTextField2(
+                label = stringResource(id = R.string.lastDateOfBooking),
+                dateValue = data.lastDateOfBooking,
+                onDateSelected = { newDate -> onItemValueChange(data.copy(lastDateOfBooking = newDate)) }
+            )
 
             data.yatraDescription?.let {
                 FormTextBox(value = it,
@@ -435,90 +436,51 @@ fun AddYatraForm(
     }
 }
 
+
 @Composable
-fun AddYatraForm2(
-    data: YatraDetailsResponse.Yatra,
-    modifier: Modifier = Modifier,
-    onItemValueChange: (YatraDetailsResponse.Yatra) -> Unit,
-    onSelectImageClick: () -> Unit,
+fun DateTextField2(
+    label: String,
+    dateValue: String?,
+    onDateSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    // Date picker state
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
-    var selectedDate by remember { mutableStateOf(data.departureDate ?: "") }
+    var selectedDate by remember { mutableStateOf(dateValue ?: "") }
 
-    // Date picker dialog
     val datePickerDialog = android.app.DatePickerDialog(
         context,
         { _, selectedYear, selectedMonth, selectedDay ->
             val cal = Calendar.getInstance().apply {
                 set(selectedYear, selectedMonth, selectedDay)
             }
-            val dayOfWeek =
-                cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault())
+            val dayOfWeek = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault())
             selectedDate = "${selectedDay}/${selectedMonth + 1}/${selectedYear} ($dayOfWeek)"
-            onItemValueChange(data.copy(departureDate = selectedDate))
+            onDateSelected(selectedDate)
         },
         year, month, day
     )
 
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        ),
-        elevation = CardDefaults.cardElevation(5.dp),
-        modifier = modifier.padding(10.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(15.dp)
-        ) {
-            // Date picker field
-            OutlinedTextField(
-                value = selectedDate,
-                onValueChange = {},
-                label = { Text(text = stringResource(id = R.string.DepartureDate)) },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.DateRange,
-                        contentDescription = "Select Date",
-                        modifier = Modifier.clickable {
-                            datePickerDialog.show()
-                        }
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { datePickerDialog.show() },
-                readOnly = true
+    OutlinedTextField(
+        value = selectedDate,
+        onValueChange = {},
+        label = { Text(text = label) },
+        modifier = modifier.clickable { datePickerDialog.show() },
+        trailingIcon = {
+            Icon(
+                imageVector = Icons.Filled.DateRange,
+                contentDescription = "Select Date",
+                modifier = Modifier.clickable {
+                    datePickerDialog.show()
+                }
             )
+        },
 
-            // Other fields...
-
-            // Checkbox for Terms and Conditions
-            var isChecked by remember { mutableStateOf(false) }
-
-            Button(
-                onClick = {
-                    if (isChecked) {
-                        onSelectImageClick()
-                    } else {
-                        Toast.makeText(context, "Please accept terms and conditions", Toast.LENGTH_SHORT).show()
-                    }
-                },
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = stringResource(id = R.string.save))
-            }
-
-            // Image display and selection
-        }
-    }
+        readOnly = true
+    )
 }
 
 
@@ -540,23 +502,6 @@ fun FormTextBoxWithDivider(
             keyboardOptions = KeyboardOptions()
         )
         Divider()
-    }
-}
-
-
-@RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePicker2(){
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        // Pre-select a date for January 4, 2020
-        val state = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
-        androidx.compose.material3.DatePicker(
-            state = state,
-            showModeToggle = false,
-            title = {},
-            headline = {},
-            modifier = Modifier.padding(top = 1.dp))
     }
 }
 
@@ -688,67 +633,87 @@ fun SinglePhotoPicker(
     }
 }
 
+
 @Composable
 fun DatePickerDialog(
-    onDateSelected: (startDate: LocalDate, endDate: LocalDate) -> Unit,
-    onDismiss: () -> Unit
+    selectedDate: String?,
+    onDateSelected: (String) -> Unit,
+    onDismissRequest: () -> Unit
 ) {
-    Dialog(
-        onDismissRequest = onDismiss) {
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
 
-    }
-}
+    val datePickerDialog = android.app.DatePickerDialog(
+        context,
+        { _, year, month, dayOfMonth ->
+            val dayOfWeek = SimpleDateFormat("EEEE", Locale.getDefault()).format(calendar.time)
+            onDateSelected("$dayOfWeek, $dayOfMonth/${month + 1}/$year")
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
 
-
-@RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePicker(){
-    // Decoupled snackbar host state from scaffold state for demo purposes.
-    val snackState = remember { SnackbarHostState() }
-    val snackScope = rememberCoroutineScope()
-    SnackbarHost(hostState = snackState, Modifier.zIndex(1f))
-
-    val state = rememberDateRangePickerState()
-    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top) {
-        // Add a row with "Save" and dismiss actions.
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 12.dp, end = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconButton(onClick = { }) {
-                Icon(Icons.Filled.Close, contentDescription = "Localized description")
-            }
-            TextButton(
-                onClick = {
-                    snackScope.launch {
-                        val range =
-                            state.selectedStartDateMillis!!..state.selectedEndDateMillis!!
-                        // Convert milliseconds to LocalDate
-                        val startDate = Instant.ofEpochMilli(state.selectedStartDateMillis!!)
-                            .atZone(ZoneId.systemDefault()).toLocalDate()
-                        val endDate = Instant.ofEpochMilli(state.selectedEndDateMillis!!)
-                            .atZone(ZoneId.systemDefault()).toLocalDate()
-
-// Format LocalDate to a more human-readable format
-                        val formattedStartDate = startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                        val formattedEndDate = endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
-// Show the formatted dates in the snackbar
-                        snackState.showSnackbar("Saved range (dates): $formattedStartDate to $formattedEndDate")
-                    }
-                },
-                enabled = state.selectedEndDateMillis != null
-            ) {
-                Text1(text = "Save")
-            }
+    if (selectedDate != null) {
+        val sdf = SimpleDateFormat("EEEE, dd/MM/yyyy", Locale.getDefault())
+        val date = sdf.parse(selectedDate)
+        date?.let {
+            calendar.time = it
+            datePickerDialog.updateDate(
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
         }
-        DateRangePicker(state = state, modifier = Modifier.weight(1f))
+    }
+
+    datePickerDialog.setOnDismissListener {
+        onDismissRequest()
+    }
+
+    LaunchedEffect(Unit) {
+        datePickerDialog.show()
     }
 }
+
+
+@Composable
+fun FormTextBoxWithDatePicker(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = { /* Text field is read-only, so this is empty */ },
+        label = { Text(label) },
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { showDatePicker = true },  // Show the date picker when clicked
+        enabled = enabled,
+        trailingIcon = { Icon(Icons.Filled.DateRange, contentDescription = null) },
+        singleLine = true,
+        readOnly = true  // Makes the text field non-editable
+    )
+
+    if (showDatePicker) {
+        DatePickerDialog(
+            selectedDate = value,
+            onDateSelected = {
+                onValueChange(it)
+                showDatePicker = false  // Dismiss the date picker after selection
+            },
+            onDismissRequest = {
+                showDatePicker = false  // Dismiss if the user cancels the date picker
+            }
+        )
+    }
+}
+
 
 @Composable
 fun TwoTextFieldsInRow() {
@@ -770,19 +735,117 @@ fun TwoTextFieldsInRow() {
     }
 }
 
+
+@Composable
+fun DynamicTextFieldList() {
+    var currentText by remember { mutableStateOf("") }
+    var entriesList by remember { mutableStateOf(listOf<String>()) }
+
+    Column(
+        modifier = Modifier.padding(16.dp)
+    ) {
+        // TextField for current input
+        TextField(
+            value = currentText,
+            onValueChange = { currentText = it },
+            label = { Text("Enter a value") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Button to add the current input to the list
+        Button(
+            onClick = {
+                if (currentText.isNotEmpty()) {
+                    entriesList = entriesList + currentText
+                    currentText = "" // Clear the TextField after adding
+                }
+            },
+            modifier = Modifier.align(Alignment.End)
+        ) {
+            Text("Add")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Display the list of entries
+        Text("Entries:")
+        LazyColumn {
+            items(entriesList) { entry ->
+                Text(text = entry, modifier = Modifier.padding(vertical = 4.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun DynamicEntryList() {
+    var textFieldValue by remember { mutableStateOf("") }
+    var entries by remember { mutableStateOf(listOf<String>()) }
+    val suggestions = listOf("Khatu", "Balaji", "Haridwar", "Rishikesh")
+
+    Column {
+        // TextField with Add Button
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextField(
+                value = textFieldValue,
+                onValueChange = { textFieldValue = it },
+                label = { Text("Enter item") },
+                modifier = Modifier.weight(1f)
+            )
+            Button(onClick = {
+                if (textFieldValue.isNotBlank()) {
+                    entries = entries + textFieldValue
+                    textFieldValue = ""
+                }
+            }) {
+                Text("Add")
+            }
+        }
+
+        // Suggestions List
+        LazyColumn {
+            val filteredSuggestions = suggestions.filter {
+                it.contains(textFieldValue, ignoreCase = true)
+            }
+            items(filteredSuggestions) { suggestion ->
+                Text(
+                    suggestion,
+                    modifier = Modifier
+                        .clickable {
+                            textFieldValue = suggestion
+                        }
+                        .padding(8.dp)
+                )
+            }
+        }
+
+        // Entries List with Remove Button
+        LazyColumn {
+            items(entries) { entry ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                ) {
+                    Text(entry, modifier = Modifier.weight(1f))
+                    IconButton(onClick = {
+                        entries = entries.filterNot { it == entry }
+                    }) {
+                        Icon(Icons.Default.Close, contentDescription = "Remove")
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun AddYatraPreview(){
     TirthBusTheme {
-        /*AddContactForm(
-            data = YatraDetailsResponse.Yatra(organiserName = "Nitin Kumar"),
-            onItemValueChange = {}
-        )*/
-        AddYatraForm2(
-            data = YatraDetailsResponse.Yatra(),
-            onItemValueChange = {},
-            onSelectImageClick = { /*TODO*/ },
-        )
+       DynamicEntryList()
     }
 }

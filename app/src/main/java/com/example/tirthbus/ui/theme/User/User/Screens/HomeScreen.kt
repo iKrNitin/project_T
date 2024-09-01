@@ -160,7 +160,7 @@ fun UserHomeScreen(
                 NavigationDrawerItem(
                     label = { Text(text = stringResource(id = R.string.Organiser)) },
                     selected = false,
-                    onClick = {navigateToOrganiserSignUpScreen()},
+                    onClick = {navigateToOraganiserHomeScreen()},
                     icon = { Icon(imageVector = Icons.Filled.Person, contentDescription = "hey") })
 
                 NavigationDrawerItem(
