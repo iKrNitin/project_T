@@ -82,6 +82,7 @@ object YatraDetailsScreenDestination:NavigationDestination{
 fun YatraDetailScreen(
     yatraId:String,
     navigateBack:()->Unit,
+    navigateToBookingDetailScreen:()->Unit,
     viewModel: YatraDetailsViewModel = hiltViewModel()
 ){
     val yatraDetailsState by viewModel.yatraDetailsState.collectAsState()
@@ -117,7 +118,7 @@ fun YatraDetailScreen(
 
         is ResultState.Success -> {
             YatraDetailsLayout(item = yatraState.data, modifier = Modifier.padding(innerpadding),
-                onCallClick = {})
+                onCallClick = {navigateToBookingDetailScreen()})
         }
 
 

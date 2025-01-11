@@ -12,6 +12,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowColumn
@@ -311,16 +312,7 @@ fun AddYatraForm(
             }
 
             Row(modifier = Modifier.fillMaxWidth()){
-            /*data.departureDate?.let {
-                FormTextBox(
-                    value = it,
-                    onValueChange = { onItemValueChange(data.copy(departureDate = it)) },
-                    label = stringResource(id = R.string.DepartureDate),
-                    trailingIcon = { Icon(Icons.Filled.DateRange, contentDescription = null) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                    modifier = Modifier.weight(1.5f)
-                )
-            }*/
+
                 DateTextField2(
                     label = stringResource(id = R.string.DepartureDate),
                     dateValue = data.departureDate,
@@ -329,7 +321,7 @@ fun AddYatraForm(
 
                 Spacer(modifier = Modifier.width(5.dp))
 
-            data.departureTime?.let {
+                data.departureTime?.let {
                 FormTextBox(value = it,
                     onValueChange = { onItemValueChange(data.copy(departureTime = it)) },
                     label = stringResource(
@@ -403,6 +395,8 @@ fun AddYatraForm(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
                 )
             }
+
+            //DynamicEntryList()
 
             data.organiserName?.let {
                 FormTextBox(value = it,
@@ -794,6 +788,7 @@ fun DynamicEntryList() {
                 label = { Text("Enter item") },
                 modifier = Modifier.weight(1f)
             )
+            Spacer(modifier = Modifier.width(5.dp))
             Button(onClick = {
                 if (textFieldValue.isNotBlank()) {
                     entries = entries + textFieldValue
@@ -804,20 +799,35 @@ fun DynamicEntryList() {
             }
         }
 
-        // Suggestions List
-        LazyColumn {
+        // Suggestions List (shown only when typing)
+        if (textFieldValue.isNotBlank()) {
+            // Filter suggestions and limit to top two
             val filteredSuggestions = suggestions.filter {
                 it.contains(textFieldValue, ignoreCase = true)
-            }
-            items(filteredSuggestions) { suggestion ->
-                Text(
-                    suggestion,
+            }.take(2)
+
+            // Overlay suggestions
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Card(
+                    elevation = CardDefaults.cardElevation(5.dp),
                     modifier = Modifier
-                        .clickable {
-                            textFieldValue = suggestion
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                ) {
+                    LazyColumn {
+                        items(filteredSuggestions) { suggestion ->
+                            Text(
+                                text = suggestion,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        textFieldValue = suggestion
+                                    }
+                                    .padding(8.dp)
+                            )
                         }
-                        .padding(8.dp)
-                )
+                    }
+                }
             }
         }
 
@@ -839,6 +849,7 @@ fun DynamicEntryList() {
         }
     }
 }
+
 
 
 @RequiresApi(Build.VERSION_CODES.O)

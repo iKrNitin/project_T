@@ -34,6 +34,7 @@ import com.example.tirthbus.ui.theme.Organiser.Screens.AddList
 import com.example.tirthbus.ui.theme.Organiser.Screens.AddYatraScreen1
 import com.example.tirthbus.ui.theme.Organiser.Screens.AddYatraScreen2
 import com.example.tirthbus.ui.theme.Organiser.Screens.AutoCompletePlacesScreen
+import com.example.tirthbus.ui.theme.Organiser.Screens.DynamicEntryList
 import com.example.tirthbus.ui.theme.Organiser.Screens.GetCurrentLocation
 import com.example.tirthbus.ui.theme.Organiser.Screens.MainScreen
 import com.example.tirthbus.ui.theme.Organiser.Screens.PhoneAuthScreen
@@ -113,6 +114,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     //ॐ श्री गणेशाय नम:
                     MyApp()
+
                    // AutoCompletePlacesScreen(placesClient = placesClient)
                     //LocationScreen(currentLocation = currentLocation, context = this@MainActivity)
                 }

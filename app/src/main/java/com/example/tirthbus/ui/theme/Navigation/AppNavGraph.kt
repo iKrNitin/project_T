@@ -23,6 +23,8 @@ import com.example.tirthbus.ui.theme.Organiser.Screens.OrganiserSignUpDestinatio
 import com.example.tirthbus.ui.theme.Organiser.Screens.OrganiserSignUpScreen
 import com.example.tirthbus.ui.theme.Organiser.Screens.OrganiserSigninDestination
 import com.example.tirthbus.ui.theme.Organiser.ViewModel.YatraUiState
+import com.example.tirthbus.ui.theme.User.User.Screens.BookingDetailsDestination
+import com.example.tirthbus.ui.theme.User.User.Screens.BookingDetailsScreen
 import com.example.tirthbus.ui.theme.User.User.Screens.SearchResultScreen
 import com.example.tirthbus.ui.theme.User.User.Screens.SearchResultsDestination
 import com.example.tirthbus.ui.theme.User.User.Screens.SearchScreen
@@ -201,7 +203,8 @@ fun AppNavHost(
             val yatraId = backStackEntry.arguments?.getString("yatraId")
             yatraId?.let {
                 YatraDetailScreen(yatraId = it,
-                    navigateBack = {navController.navigateUp()})
+                    navigateBack = {navController.navigateUp()},
+                    navigateToBookingDetailScreen = {navController.navigate(BookingDetailsDestination.route)})
             }
         }
 
@@ -211,6 +214,10 @@ fun AppNavHost(
 
         composable(route = UserBookingsDestination.route){
             UserBookingScreen(navigateToHomeScreen = {navController.navigate(UserHomeScreenDestination.route)})
+        }
+
+        composable(route = BookingDetailsDestination.route){
+            BookingDetailsScreen()
         }
     }
 }
