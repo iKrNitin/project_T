@@ -414,7 +414,7 @@ class YatraPagingSource @Inject constructor(private val db: FirebaseFirestore,
     override suspend fun load(params: LoadParams<DocumentSnapshot>): LoadResult<DocumentSnapshot, YatraDetailsResponse> {
         return try {
             val currentPageSnapshot = params.key ?: db.collection("yatras")
-                .orderBy("yatraName", Query.Direction.DESCENDING)
+                .orderBy("yatraTitle", Query.Direction.DESCENDING)
                 .limit(PAGE_SIZE.toLong())
                 .get()
                 .await()
@@ -429,7 +429,7 @@ class YatraPagingSource @Inject constructor(private val db: FirebaseFirestore,
             val yatras = filteredYatras.map{
                     document -> YatraDetailsResponse(
                 yatra = YatraDetailsResponse.Yatra(
-                    yatraTitle = document.getString("yatraName"),
+                    yatraTitle = document.getString("yatraTitle"),
                     departureDate = document.getString("date"),
                     totalAmount = document.getString("totalAmount"),
                     organiserName = document.getString("organiserName"),
